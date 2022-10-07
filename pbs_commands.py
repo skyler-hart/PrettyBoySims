@@ -1711,6 +1711,273 @@ def pbs_nanny(_connection=None):
         sim.add_trait(t_waterproof)
 
 
+@sims4.commands.Command('pbs_othersim', command_type=sims4.commands.CommandType.Live)
+def pbs_othersim(_connection=None):
+    # Get the console output
+    output = sims4.commands.CheatOutput(_connection)
+
+    # Get the sim_info for the active sim
+    sim = services.client_manager().get(_connection).active_sim.sim_info
+
+    # Get the tuned trait instance from the tuning instance manager
+    instance_manager = services.get_instance_manager(Types.TRAIT)
+    t_active = instance_manager.get(get_resource_key(T_ACTIVE, Types.TRAIT))
+    t_adventurous = instance_manager.get(get_resource_key(T_ADVENTUROUS, Types.TRAIT))
+    t_alluring = instance_manager.get(get_resource_key(T_ALLURING, Types.TRAIT))
+    t_ambitious = instance_manager.get(get_resource_key(T_AMBITIOUS, Types.TRAIT))
+    t_angler = instance_manager.get(get_resource_key(T_ANGLER, Types.TRAIT))
+    t_animalattraction = instance_manager.get(get_resource_key(T_ANIMALATTRACT, Types.TRAIT))
+    t_animalenthusiast = instance_manager.get(get_resource_key(T_ANIMALENTHUSIAST, Types.TRAIT))
+    t_animalwhisperer = instance_manager.get(get_resource_key(T_ANIMALWHISPERER, Types.TRAIT))
+    t_antiseptic = instance_manager.get(get_resource_key(T_ANTISEPTIC, Types.TRAIT))
+    t_catlover = instance_manager.get(get_resource_key(T_CATLOVER, Types.TRAIT))
+    t_commitmentissues = instance_manager.get(get_resource_key(T_COMMITMENTISSUES, Types.TRAIT))
+    t_dauntless = instance_manager.get(get_resource_key(T_DAUNTLESS, Types.TRAIT))
+    t_doglover = instance_manager.get(get_resource_key(T_DOGLOVER, Types.TRAIT))
+    t_ecoengineer = instance_manager.get(get_resource_key(T_ECOENGINEER, Types.TRAIT))
+    t_ecomaster = instance_manager.get(get_resource_key(T_ECOMASTER, Types.TRAIT))
+    t_essenceofflavor = instance_manager.get(get_resource_key(T_ESSENCEOFFLAVOR, Types.TRAIT))
+    t_fakegenius = instance_manager.get(get_resource_key(T_FAKEGENIUS, Types.TRAIT))
+    t_freeservices = instance_manager.get(get_resource_key(T_FREESERVICES, Types.TRAIT))
+    t_freshchef = instance_manager.get(get_resource_key(T_FRESHCHEF, Types.TRAIT))
+    t_frugal = instance_manager.get(get_resource_key(T_FRUGAL, Types.TRAIT))
+    t_gschoola = instance_manager.get(get_resource_key(T_GSCHOOLA, Types.TRAIT))
+    t_gschoolb = instance_manager.get(get_resource_key(T_GSCHOOLB, Types.TRAIT))
+    t_gschoolc = instance_manager.get(get_resource_key(T_GSCHOOLC, Types.TRAIT))
+    t_gschoold = instance_manager.get(get_resource_key(T_GSCHOOLD, Types.TRAIT))
+    t_gschoolf = instance_manager.get(get_resource_key(T_GSCHOOLF, Types.TRAIT))
+    t_heatproof = instance_manager.get(get_resource_key(T_HEATPROOF, Types.TRAIT))
+    t_highmaintenance = instance_manager.get(get_resource_key(T_HIGHMAINT, Types.TRAIT))
+    t_highmetab = instance_manager.get(get_resource_key(T_HIGHMET, Types.TRAIT))
+    t_hschoola = instance_manager.get(get_resource_key(T_HSCHOOLA, Types.TRAIT))
+    t_hschoolb = instance_manager.get(get_resource_key(T_HSCHOOLB, Types.TRAIT))
+    t_hschoolc = instance_manager.get(get_resource_key(T_HSCHOOLC, Types.TRAIT))
+    t_hschoold = instance_manager.get(get_resource_key(T_HSCHOOLD, Types.TRAIT))
+    t_hschoolf = instance_manager.get(get_resource_key(T_HSCHOOLF, Types.TRAIT))
+    t_iceproof = instance_manager.get(get_resource_key(T_ICEPROOF, Types.TRAIT))
+    t_invested = instance_manager.get(get_resource_key(T_INVESTED, Types.TRAIT))
+    t_longevity = instance_manager.get(get_resource_key(T_LONGEVITY, Types.TRAIT))
+    t_lskill_argumentative = instance_manager.get(get_resource_key(T_LSKILL_ARGUMENTATIVE, Types.TRAIT))
+    t_lskill_badmanners = instance_manager.get(get_resource_key(T_LSKILL_BADMANNERS, Types.TRAIT))
+    t_lskill_compassionate = instance_manager.get(get_resource_key(T_LSKILL_COMPASSIONATE, Types.TRAIT))
+    t_lskill_emotionalcontrol = instance_manager.get(get_resource_key(T_LSKILL_EMOTIONALCONTROL, Types.TRAIT))
+    t_lskill_goodmanners = instance_manager.get(get_resource_key(T_LSKILL_GOODMANNERS, Types.TRAIT))
+    t_lskill_irresponsible = instance_manager.get(get_resource_key(T_LSKILL_IRRESPONSIBLE, Types.TRAIT))
+    t_lskill_uncontrolledemotion = instance_manager.get(get_resource_key(T_LSKILL_UNCONTROLEMOTION, Types.TRAIT))
+    t_lskill_unfeeling = instance_manager.get(get_resource_key(T_LSKILL_UNFEELING, Types.TRAIT))
+    t_pamatriarch = instance_manager.get(get_resource_key(T_PAMATRIARCH, Types.TRAIT))
+    t_reprankpristine = instance_manager.get(get_resource_key(T_REPRANK7PRISTINE, Types.TRAIT))
+    t_sicknessimmunity = instance_manager.get(get_resource_key(T_SICKNESSIMMUNITY, Types.TRAIT))
+    t_stormchaser = instance_manager.get(get_resource_key(T_STORMCHASER, Types.TRAIT))
+    t_theknack = instance_manager.get(get_resource_key(T_THEKNACK, Types.TRAIT))
+    t_overclock = instance_manager.get(get_resource_key(T_UNLOCKEDOVERCLOCK, Types.TRAIT))
+    t_waterproof = instance_manager.get(get_resource_key(T_WATERPROOF, Types.TRAIT))
+    t_webmaster = instance_manager.get(get_resource_key(T_WEBMASTER, Types.TRAIT))
+
+    t_romexplore = instance_manager.get(get_resource_key(T_ROM_EXPLORING, Types.TRAIT))
+    t_romnotexplore = instance_manager.get(get_resource_key(T_ROM_NOTEXPLORING, Types.TRAIT))
+
+    t_child = instance_manager.get(get_resource_key(T_CHILD, Types.TRAIT))
+    t_teen = instance_manager.get(get_resource_key(T_TEEN, Types.TRAIT))
+    t_yadult = instance_manager.get(get_resource_key(T_YADULT, Types.TRAIT))
+    t_adult = instance_manager.get(get_resource_key(T_ADULT, Types.TRAIT))
+    t_elder = instance_manager.get(get_resource_key(T_ELDER, Types.TRAIT))
+
+    t_female = instance_manager.get(get_resource_key(T_FEMALE, Types.TRAIT))
+
+    t_cumslut = instance_manager.get(get_resource_key(T_WW_CUMSLUT, Types.TRAIT))
+    t_absorbancy = instance_manager.get(get_resource_key(T_WW_EXTRAABSORB, Types.TRAIT))
+    t_genlover = instance_manager.get(get_resource_key(T_WW_GENLOVER, Types.TRAIT))
+    t_beardlover = instance_manager.get(get_resource_key(T_WW_LIKESBEARD, Types.TRAIT))
+    t_chubbychaser = instance_manager.get(get_resource_key(T_WW_LIKESFAT, Types.TRAIT))
+    t_likeboys = instance_manager.get(get_resource_key(T_WW_LIKESMALES, Types.TRAIT))
+    t_postpuberty = instance_manager.get(get_resource_key(T_WW_POSTPUBERTY, Types.TRAIT))
+    t_sexuallyalluring = instance_manager.get(get_resource_key(T_WW_SEXUALLYALLURING, Types.TRAIT))
+
+    if not sim.has_trait(t_postpuberty):
+            sim.add_trait(t_postpuberty)
+
+    if sim.has_trait(t_adventurous):
+        sim.remove_trait(t_adventurous)
+
+    if sim.has_trait(t_ambitious):
+        sim.remove_trait(t_ambitious)
+
+    if sim.has_trait(t_angler):
+        sim.remove_trait(t_angler)
+
+    if sim.has_trait(t_animalattraction):
+        sim.remove_trait(t_animalattraction)
+
+    if sim.has_trait(t_animalenthusiast):
+        sim.remove_trait(t_animalenthusiast)
+
+    if sim.has_trait(t_animalwhisperer):
+        sim.remove_trait(t_animalwhisperer)
+
+    if sim.has_trait(t_antiseptic):
+        sim.remove_trait(t_antiseptic)
+
+    if sim.has_trait(t_catlover):
+        sim.remove_trait(t_catlover)
+
+    if sim.has_trait(t_commitmentissues):
+        sim.remove_trait(t_commitmentissues)
+
+    if sim.has_trait(t_dauntless):
+        sim.remove_trait(t_dauntless)
+
+    if sim.has_trait(t_doglover):
+        sim.remove_trait(t_doglover)
+
+    if sim.has_trait(t_ecoengineer):
+        sim.remove_trait(t_ecoengineer)
+
+    if sim.has_trait(t_ecomaster):
+        sim.remove_trait(t_ecomaster)
+
+    if sim.has_trait(t_fakegenius):
+        sim.remove_trait(t_fakegenius)
+
+    if sim.has_trait(t_highmaintenance):
+        sim.remove_trait(t_highmaintenance)
+
+    if sim.has_trait(t_child):
+        if sim.has_trait(t_gschoolb):
+            sim.remove_trait(t_gschoolb)
+
+        if sim.has_trait(t_gschoolc):
+            sim.remove_trait(t_gschoolc)
+
+        if sim.has_trait(t_gschoold):
+            sim.remove_trait(t_gschoold)
+
+        if sim.has_trait(t_gschoolf):
+            sim.remove_trait(t_gschoolf)
+
+        if not sim.has_trait(t_gschoola):
+            sim.add_trait(t_gschoola)
+
+    if sim.has_trait(t_teen):
+        if sim.has_trait(t_hschoolb):
+            sim.remove_trait(t_hschoolb)
+
+        if sim.has_trait(t_hschoolc):
+            sim.remove_trait(t_hschoolc)
+
+        if sim.has_trait(t_hschoold):
+            sim.remove_trait(t_hschoold)
+
+        if sim.has_trait(t_hschoolf):
+            sim.remove_trait(t_hschoolf)
+
+        if not sim.has_trait(t_hschoola):
+            sim.add_trait(t_hschoola)
+
+    # If teen or older, set gender and sexual orientation traits
+    if sim.has_trait(t_teen) or sim.has_trait(t_adult) or sim.has_trait(t_yadult) or sim.has_trait(t_elder):
+        if sim.has_trait(t_female):
+            sim.add_trait(t_absorbancy)
+            sim.add_trait(t_cumslut)
+
+            sim.add_trait(t_beardlover)
+            sim.add_trait(t_chubbychaser)
+            sim.add_trait(t_likeboys)
+
+        if sim.has_trait(t_romnotexplore):
+            sim.remove_trait(t_romnotexplore)
+            sim.add_trait(t_romexplore)
+
+        if not sim.has_trait(t_romexplore):
+            sim.add_trait(t_romexplore)
+
+        sim.add_trait(t_genlover)
+        sim.add_trait(t_sexuallyalluring)
+
+    if sim.has_trait(t_adult) or sim.has_trait(t_yadult) or sim.has_trait(t_elder):
+        if not sim.has_trait(t_pamatriarch):
+            sim.add_trait(t_pamatriarch)
+
+        if sim.has_trait(t_female):
+            if sim.has_trait(t_lskill_argumentative):
+                sim.remove_trait(t_lskill_argumentative)
+
+            if sim.has_trait(t_lskill_badmanners):
+                sim.remove_trait(t_lskill_badmanners)
+
+            if sim.has_trait(t_lskill_irresponsible):
+                sim.remove_trait(t_lskill_irresponsible)
+
+            if sim.has_trait(t_lskill_uncontrolledemotion):
+                sim.remove_trait(t_lskill_uncontrolledemotion)
+
+            if sim.has_trait(t_lskill_unfeeling):
+                sim.remove_trait(t_lskill_unfeeling)
+
+            if not sim.has_trait(t_lskill_compassionate):
+                sim.add_trait(t_lskill_compassionate)
+
+            if not sim.has_trait(t_lskill_goodmanners):
+                sim.add_trait(t_lskill_goodmanners)
+# Things above apply to teen or older
+
+# Any age
+    if sim.has_trait(t_female):
+        if not sim.has_trait(t_alluring):
+            sim.add_trait(t_alluring)
+
+    if not sim.has_trait(t_active):
+        sim.add_trait(t_active)
+
+    if not sim.has_trait(t_essenceofflavor):
+        sim.add_trait(t_essenceofflavor)
+
+    if not sim.has_trait(t_freeservices):
+        sim.add_trait(t_freeservices)
+
+    if not sim.has_trait(t_freshchef):
+        sim.add_trait(t_freshchef)
+
+    if not sim.has_trait(t_frugal):
+        sim.add_trait(t_frugal)
+
+    if not sim.has_trait(t_heatproof):
+        sim.add_trait(t_heatproof)
+
+    if not sim.has_trait(t_highmetab):
+        sim.add_trait(t_highmetab)
+
+    if not sim.has_trait(t_iceproof):
+        sim.add_trait(t_iceproof)
+
+    if not sim.has_trait(t_invested):
+        sim.add_trait(t_invested)
+
+    if not sim.has_trait(t_longevity):
+        sim.add_trait(t_longevity)
+
+    if not sim.has_trait(t_reprankpristine):
+        sim.add_trait(t_reprankpristine)
+
+    if not sim.has_trait(t_sicknessimmunity):
+        sim.add_trait(t_sicknessimmunity)
+
+    if not sim.has_trait(t_stormchaser):
+        sim.add_trait(t_stormchaser)
+
+    if not sim.has_trait(t_theknack):
+        sim.add_trait(t_theknack)
+
+    if not sim.has_trait(t_overclock):
+        sim.add_trait(t_overclock)
+
+    if not sim.has_trait(t_waterproof):
+        sim.add_trait(t_waterproof)
+
+    if not sim.has_trait(t_webmaster):
+        sim.add_trait(t_webmaster)
+
+
 @sims4.commands.Command('pbs_sex', command_type=sims4.commands.CommandType.Live)
 def pbs_sex(_connection=None):
     # Get the console output
