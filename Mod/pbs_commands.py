@@ -3501,6 +3501,18 @@ def pbs_mysim(_connection=None):
     if not sim.has_trait(trait_superparent_rolemodel):
         sim.add_trait(trait_superparent_rolemodel)
 
+    trait_university_computersciencedegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_COMPUTERSCIENCEDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_computersciencedegreebshonors):
+        sim.add_trait(trait_university_computersciencedegreebshonors)
+
+    trait_university_fineartdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_FINEARTDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_fineartdegreebahonors):
+        sim.add_trait(trait_university_fineartdegreebahonors)
+
+    trait_university_physicsdegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_PHYSICSDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_physicsdegreebshonors):
+        sim.add_trait(trait_university_physicsdegreebshonors)
+
     wellness_selfcareexpertise = instance_manager.get(get_resource_key(WELLNESS_SELFCAREEXPERTISE, Types.TRAIT))
     if not sim.has_trait(wellness_selfcareexpertise):
         sim.add_trait(wellness_selfcareexpertise)
@@ -3576,6 +3588,10 @@ def pbs_mysim(_connection=None):
         trait_phone_color_astropink = instance_manager.get(get_resource_key(TRAIT_PHONE_COLOR_ASTROPINK, Types.TRAIT))
         if not sim.has_trait(trait_phone_color_astropink):
             sim.add_trait(trait_phone_color_astropink)
+
+        trait_university_highereducation = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_HIGHEREDUCATION, Types.TRAIT))
+        if not sim.has_trait(trait_university_highereducation):
+            sim.add_trait(trait_university_highereducation)
 
         trait_walkstylefeminine = instance_manager.get(get_resource_key(TRAIT_WALKSTYLEFEMININE, Types.TRAIT))
         if not sim.has_trait(trait_walkstylefeminine):
@@ -4845,6 +4861,22 @@ def pbs_nanny(_connection=None):
     trait_superparent_rolemodel = instance_manager.get(get_resource_key(TRAIT_SUPERPARENT_ROLEMODEL, Types.TRAIT))
     if not sim.has_trait(trait_superparent_rolemodel):
         sim.add_trait(trait_superparent_rolemodel)
+
+    trait_university_fineartdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_FINEARTDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_fineartdegreebahonors):
+        sim.add_trait(trait_university_fineartdegreebahonors)
+
+    trait_university_highereducation = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_HIGHEREDUCATION, Types.TRAIT))
+    if not sim.has_trait(trait_university_highereducation):
+        sim.add_trait(trait_university_highereducation)
+
+    trait_university_languageandliteraturedegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_LANGUAGEANDLITERATUREDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_languageandliteraturedegreebahonors):
+        sim.add_trait(trait_university_languageandliteraturedegreebahonors)
+
+    trait_university_psychologydegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_PSYCHOLOGYDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_psychologydegreebshonors):
+        sim.add_trait(trait_university_psychologydegreebshonors)
 
     trait_walkstylefeminine = instance_manager.get(get_resource_key(TRAIT_WALKSTYLEFEMININE, Types.TRAIT))
     if not sim.has_trait(trait_walkstylefeminine):
