@@ -246,6 +246,14 @@ def pbs_allsims(_connection=None):
     if sim.has_trait(trait_filthdweller):
         sim.remove_trait(trait_filthdweller)
 
+    trait_freeservices = instance_manager.get(get_resource_key(TRAIT_FREESERVICES, Types.TRAIT))
+    if not sim.has_trait(trait_freeservices):
+        sim.add_trait(trait_freeservices)
+
+    trait_frugal = instance_manager.get(get_resource_key(TRAIT_FRUGAL, Types.TRAIT))
+    if not sim.has_trait(trait_frugal):
+        sim.add_trait(trait_frugal)
+
     trait_genderoptions_attractedto_notfemale = instance_manager.get(get_resource_key(TRAIT_GENDEROPTIONS_ATTRACTEDTO_NOTFEMALE, Types.TRAIT))
     if sim.has_trait(trait_genderoptions_attractedto_notfemale):
         sim.remove_trait(trait_genderoptions_attractedto_notfemale)
@@ -417,6 +425,10 @@ def pbs_allsims(_connection=None):
     trait_roboticsarm_wearing_whitecopper = instance_manager.get(get_resource_key(TRAIT_ROBOTICSARM_WEARING_WHITECOPPER, Types.TRAIT))
     if sim.has_trait(trait_roboticsarm_wearing_whitecopper):
         sim.remove_trait(trait_roboticsarm_wearing_whitecopper)
+
+    trait_selfassured = instance_manager.get(get_resource_key(TRAIT_SELFASSURED, Types.TRAIT))
+    if not sim.has_trait(trait_selfassured):
+        sim.add_trait(trait_selfassured)
 
     trait_sexualorientation_woohoointerests_female = instance_manager.get(get_resource_key(TRAIT_SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, Types.TRAIT))
     if not sim.has_trait(trait_sexualorientation_woohoointerests_female):
@@ -1311,6 +1323,14 @@ def pbs_maid(_connection=None):
     if sim.has_trait(trait_filthdweller):
         sim.remove_trait(trait_filthdweller)
 
+    trait_freeservices = instance_manager.get(get_resource_key(TRAIT_FREESERVICES, Types.TRAIT))
+    if not sim.has_trait(trait_freeservices):
+        sim.add_trait(trait_freeservices)
+
+    trait_frugal = instance_manager.get(get_resource_key(TRAIT_FRUGAL, Types.TRAIT))
+    if not sim.has_trait(trait_frugal):
+        sim.add_trait(trait_frugal)
+
     trait_genderoptions_attractedto_notfemale = instance_manager.get(get_resource_key(TRAIT_GENDEROPTIONS_ATTRACTEDTO_NOTFEMALE, Types.TRAIT))
     if sim.has_trait(trait_genderoptions_attractedto_notfemale):
         sim.remove_trait(trait_genderoptions_attractedto_notfemale)
@@ -1482,6 +1502,10 @@ def pbs_maid(_connection=None):
     trait_roboticsarm_wearing_whitecopper = instance_manager.get(get_resource_key(TRAIT_ROBOTICSARM_WEARING_WHITECOPPER, Types.TRAIT))
     if sim.has_trait(trait_roboticsarm_wearing_whitecopper):
         sim.remove_trait(trait_roboticsarm_wearing_whitecopper)
+
+    trait_selfassured = instance_manager.get(get_resource_key(TRAIT_SELFASSURED, Types.TRAIT))
+    if not sim.has_trait(trait_selfassured):
+        sim.add_trait(trait_selfassured)
 
     trait_sexualorientation_woohoointerests_female = instance_manager.get(get_resource_key(TRAIT_SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, Types.TRAIT))
     if not sim.has_trait(trait_sexualorientation_woohoointerests_female):
@@ -2137,6 +2161,10 @@ def pbs_maid(_connection=None):
 
 
     # Remove or add traits from maid sims
+    trait_alluring = instance_manager.get(get_resource_key(TRAIT_ALLURING, Types.TRAIT))
+    if not sim.has_trait(trait_alluring):
+        sim.add_trait(trait_alluring)
+
     trait_dastardly = instance_manager.get(get_resource_key(TRAIT_DASTARDLY, Types.TRAIT))
     if sim.has_trait(trait_dastardly):
         sim.remove_trait(trait_dastardly)
@@ -2181,6 +2209,10 @@ def pbs_maid(_connection=None):
     if sim.has_trait(trait_gloomy):
         sim.remove_trait(trait_gloomy)
 
+    trait_greatkisser = instance_manager.get(get_resource_key(TRAIT_GREATKISSER, Types.TRAIT))
+    if not sim.has_trait(trait_greatkisser):
+        sim.add_trait(trait_greatkisser)
+
     trait_hsexit_earnedged = instance_manager.get(get_resource_key(TRAIT_HSEXIT_EARNEDGED, Types.TRAIT))
     if not sim.has_trait(trait_hsexit_earnedged):
         sim.add_trait(trait_hsexit_earnedged)
@@ -2208,6 +2240,10 @@ def pbs_maid(_connection=None):
     trait_proper = instance_manager.get(get_resource_key(TRAIT_PROPER, Types.TRAIT))
     if not sim.has_trait(trait_proper):
         sim.add_trait(trait_proper)
+
+    trait_shameless = instance_manager.get(get_resource_key(TRAIT_SHAMELESS, Types.TRAIT))
+    if not sim.has_trait(trait_shameless):
+        sim.add_trait(trait_shameless)
 
     trait_sicknessimmunity = instance_manager.get(get_resource_key(TRAIT_SICKNESSIMMUNITY, Types.TRAIT))
     if not sim.has_trait(trait_sicknessimmunity):
@@ -2507,6 +2543,14 @@ def pbs_mysim(_connection=None):
     if sim.has_trait(trait_filthdweller):
         sim.remove_trait(trait_filthdweller)
 
+    trait_freeservices = instance_manager.get(get_resource_key(TRAIT_FREESERVICES, Types.TRAIT))
+    if not sim.has_trait(trait_freeservices):
+        sim.add_trait(trait_freeservices)
+
+    trait_frugal = instance_manager.get(get_resource_key(TRAIT_FRUGAL, Types.TRAIT))
+    if not sim.has_trait(trait_frugal):
+        sim.add_trait(trait_frugal)
+
     trait_genderoptions_attractedto_notfemale = instance_manager.get(get_resource_key(TRAIT_GENDEROPTIONS_ATTRACTEDTO_NOTFEMALE, Types.TRAIT))
     if sim.has_trait(trait_genderoptions_attractedto_notfemale):
         sim.remove_trait(trait_genderoptions_attractedto_notfemale)
@@ -2678,6 +2722,10 @@ def pbs_mysim(_connection=None):
     trait_roboticsarm_wearing_whitecopper = instance_manager.get(get_resource_key(TRAIT_ROBOTICSARM_WEARING_WHITECOPPER, Types.TRAIT))
     if sim.has_trait(trait_roboticsarm_wearing_whitecopper):
         sim.remove_trait(trait_roboticsarm_wearing_whitecopper)
+
+    trait_selfassured = instance_manager.get(get_resource_key(TRAIT_SELFASSURED, Types.TRAIT))
+    if not sim.has_trait(trait_selfassured):
+        sim.add_trait(trait_selfassured)
 
     trait_sexualorientation_woohoointerests_female = instance_manager.get(get_resource_key(TRAIT_SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, Types.TRAIT))
     if not sim.has_trait(trait_sexualorientation_woohoointerests_female):
@@ -3333,6 +3381,10 @@ def pbs_mysim(_connection=None):
 
 
     # Remove or add traits from my sim
+    trait_alluring = instance_manager.get(get_resource_key(TRAIT_ALLURING, Types.TRAIT))
+    if not sim.has_trait(trait_alluring):
+        sim.add_trait(trait_alluring)
+
     trait_alwayswelcome = instance_manager.get(get_resource_key(TRAIT_ALWAYSWELCOME, Types.TRAIT))
     if not sim.has_trait(trait_alwayswelcome):
         sim.add_trait(trait_alwayswelcome)
@@ -3352,6 +3404,10 @@ def pbs_mysim(_connection=None):
     trait_dauntless = instance_manager.get(get_resource_key(TRAIT_DAUNTLESS, Types.TRAIT))
     if sim.has_trait(trait_dauntless):
         sim.remove_trait(trait_dauntless)
+
+    trait_entrepreneur_theknowledge = instance_manager.get(get_resource_key(TRAIT_ENTREPRENEUR_THEKNOWLEDGE, Types.TRAIT))
+    if not sim.has_trait(trait_entrepreneur_theknowledge):
+        sim.add_trait(trait_entrepreneur_theknowledge)
 
     trait_evil = instance_manager.get(get_resource_key(TRAIT_EVIL, Types.TRAIT))
     if sim.has_trait(trait_evil):
@@ -3385,9 +3441,17 @@ def pbs_mysim(_connection=None):
     if sim.has_trait(trait_gloomy):
         sim.remove_trait(trait_gloomy)
 
+    trait_greatkisser = instance_manager.get(get_resource_key(TRAIT_GREATKISSER, Types.TRAIT))
+    if not sim.has_trait(trait_greatkisser):
+        sim.add_trait(trait_greatkisser)
+
     trait_hsexit_earnedged = instance_manager.get(get_resource_key(TRAIT_HSEXIT_EARNEDGED, Types.TRAIT))
     if not sim.has_trait(trait_hsexit_earnedged):
         sim.add_trait(trait_hsexit_earnedged)
+
+    trait_incrediblyfriendly = instance_manager.get(get_resource_key(TRAIT_INCREDIBLYFRIENDLY, Types.TRAIT))
+    if not sim.has_trait(trait_incrediblyfriendly):
+        sim.add_trait(trait_incrediblyfriendly)
 
     trait_jealous = instance_manager.get(get_resource_key(TRAIT_JEALOUS, Types.TRAIT))
     if sim.has_trait(trait_jealous):
@@ -3396,6 +3460,10 @@ def pbs_mysim(_connection=None):
     trait_kleptomaniac = instance_manager.get(get_resource_key(TRAIT_KLEPTOMANIAC, Types.TRAIT))
     if sim.has_trait(trait_kleptomaniac):
         sim.remove_trait(trait_kleptomaniac)
+
+    trait_legendary = instance_manager.get(get_resource_key(TRAIT_LEGENDARY, Types.TRAIT))
+    if not sim.has_trait(trait_legendary):
+        sim.add_trait(trait_legendary)
 
     trait_mentor = instance_manager.get(get_resource_key(TRAIT_MENTOR, Types.TRAIT))
     if not sim.has_trait(trait_mentor):
@@ -3416,6 +3484,14 @@ def pbs_mysim(_connection=None):
     trait_player = instance_manager.get(get_resource_key(TRAIT_PLAYER, Types.TRAIT))
     if not sim.has_trait(trait_player):
         sim.add_trait(trait_player)
+
+    trait_reward_incest = instance_manager.get(get_resource_key(TRAIT_REWARD_INCEST, Types.TRAIT))
+    if not sim.has_trait(trait_reward_incest):
+        sim.add_trait(trait_reward_incest)
+
+    trait_shameless = instance_manager.get(get_resource_key(TRAIT_SHAMELESS, Types.TRAIT))
+    if not sim.has_trait(trait_shameless):
+        sim.add_trait(trait_shameless)
 
     trait_sicknessimmunity = instance_manager.get(get_resource_key(TRAIT_SICKNESSIMMUNITY, Types.TRAIT))
     if not sim.has_trait(trait_sicknessimmunity):
@@ -3444,6 +3520,10 @@ def pbs_mysim(_connection=None):
     wickedwhims_attractiveness_trait_simpreference_dislikes_haircolor_black = instance_manager.get(get_resource_key(WICKEDWHIMS_ATTRACTIVENESS_TRAIT_SIMPREFERENCE_DISLIKES_HAIRCOLOR_BLACK, Types.TRAIT))
     if not sim.has_trait(wickedwhims_attractiveness_trait_simpreference_dislikes_haircolor_black):
         sim.add_trait(wickedwhims_attractiveness_trait_simpreference_dislikes_haircolor_black)
+
+    wickedwhims_trait_nudity_nosweat_reward = instance_manager.get(get_resource_key(WICKEDWHIMS_TRAIT_NUDITY_NOSWEAT_REWARD, Types.TRAIT))
+    if not sim.has_trait(wickedwhims_trait_nudity_nosweat_reward):
+        sim.add_trait(wickedwhims_trait_nudity_nosweat_reward)
 
     wickedwhims_trait_relationships_poly = instance_manager.get(get_resource_key(WICKEDWHIMS_TRAIT_RELATIONSHIPS_POLY, Types.TRAIT))
     if not sim.has_trait(wickedwhims_trait_relationships_poly):
@@ -3824,6 +3904,14 @@ def pbs_nanny(_connection=None):
     if sim.has_trait(trait_filthdweller):
         sim.remove_trait(trait_filthdweller)
 
+    trait_freeservices = instance_manager.get(get_resource_key(TRAIT_FREESERVICES, Types.TRAIT))
+    if not sim.has_trait(trait_freeservices):
+        sim.add_trait(trait_freeservices)
+
+    trait_frugal = instance_manager.get(get_resource_key(TRAIT_FRUGAL, Types.TRAIT))
+    if not sim.has_trait(trait_frugal):
+        sim.add_trait(trait_frugal)
+
     trait_genderoptions_attractedto_notfemale = instance_manager.get(get_resource_key(TRAIT_GENDEROPTIONS_ATTRACTEDTO_NOTFEMALE, Types.TRAIT))
     if sim.has_trait(trait_genderoptions_attractedto_notfemale):
         sim.remove_trait(trait_genderoptions_attractedto_notfemale)
@@ -3995,6 +4083,10 @@ def pbs_nanny(_connection=None):
     trait_roboticsarm_wearing_whitecopper = instance_manager.get(get_resource_key(TRAIT_ROBOTICSARM_WEARING_WHITECOPPER, Types.TRAIT))
     if sim.has_trait(trait_roboticsarm_wearing_whitecopper):
         sim.remove_trait(trait_roboticsarm_wearing_whitecopper)
+
+    trait_selfassured = instance_manager.get(get_resource_key(TRAIT_SELFASSURED, Types.TRAIT))
+    if not sim.has_trait(trait_selfassured):
+        sim.add_trait(trait_selfassured)
 
     trait_sexualorientation_woohoointerests_female = instance_manager.get(get_resource_key(TRAIT_SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, Types.TRAIT))
     if not sim.has_trait(trait_sexualorientation_woohoointerests_female):
@@ -4650,6 +4742,10 @@ def pbs_nanny(_connection=None):
 
 
     # Remove or add traits from nanny sims
+    trait_alluring = instance_manager.get(get_resource_key(TRAIT_ALLURING, Types.TRAIT))
+    if not sim.has_trait(trait_alluring):
+        sim.add_trait(trait_alluring)
+
     trait_dastardly = instance_manager.get(get_resource_key(TRAIT_DASTARDLY, Types.TRAIT))
     if sim.has_trait(trait_dastardly):
         sim.remove_trait(trait_dastardly)
@@ -4694,9 +4790,17 @@ def pbs_nanny(_connection=None):
     if sim.has_trait(trait_gloomy):
         sim.remove_trait(trait_gloomy)
 
+    trait_greatkisser = instance_manager.get(get_resource_key(TRAIT_GREATKISSER, Types.TRAIT))
+    if not sim.has_trait(trait_greatkisser):
+        sim.add_trait(trait_greatkisser)
+
     trait_hsexit_earnedged = instance_manager.get(get_resource_key(TRAIT_HSEXIT_EARNEDGED, Types.TRAIT))
     if not sim.has_trait(trait_hsexit_earnedged):
         sim.add_trait(trait_hsexit_earnedged)
+
+    trait_incrediblyfriendly = instance_manager.get(get_resource_key(TRAIT_INCREDIBLYFRIENDLY, Types.TRAIT))
+    if not sim.has_trait(trait_incrediblyfriendly):
+        sim.add_trait(trait_incrediblyfriendly)
 
     trait_isnanny = instance_manager.get(get_resource_key(TRAIT_ISNANNY, Types.TRAIT))
     if not sim.has_trait(trait_isnanny):
@@ -4709,6 +4813,10 @@ def pbs_nanny(_connection=None):
     trait_kleptomaniac = instance_manager.get(get_resource_key(TRAIT_KLEPTOMANIAC, Types.TRAIT))
     if sim.has_trait(trait_kleptomaniac):
         sim.remove_trait(trait_kleptomaniac)
+
+    trait_legendary = instance_manager.get(get_resource_key(TRAIT_LEGENDARY, Types.TRAIT))
+    if not sim.has_trait(trait_legendary):
+        sim.add_trait(trait_legendary)
 
     trait_mentor = instance_manager.get(get_resource_key(TRAIT_MENTOR, Types.TRAIT))
     if not sim.has_trait(trait_mentor):
@@ -4725,6 +4833,10 @@ def pbs_nanny(_connection=None):
     trait_proper = instance_manager.get(get_resource_key(TRAIT_PROPER, Types.TRAIT))
     if not sim.has_trait(trait_proper):
         sim.add_trait(trait_proper)
+
+    trait_shameless = instance_manager.get(get_resource_key(TRAIT_SHAMELESS, Types.TRAIT))
+    if not sim.has_trait(trait_shameless):
+        sim.add_trait(trait_shameless)
 
     trait_sicknessimmunity = instance_manager.get(get_resource_key(TRAIT_SICKNESSIMMUNITY, Types.TRAIT))
     if not sim.has_trait(trait_sicknessimmunity):
@@ -5028,6 +5140,14 @@ def pbs_othersim(_connection=None):
     if sim.has_trait(trait_filthdweller):
         sim.remove_trait(trait_filthdweller)
 
+    trait_freeservices = instance_manager.get(get_resource_key(TRAIT_FREESERVICES, Types.TRAIT))
+    if not sim.has_trait(trait_freeservices):
+        sim.add_trait(trait_freeservices)
+
+    trait_frugal = instance_manager.get(get_resource_key(TRAIT_FRUGAL, Types.TRAIT))
+    if not sim.has_trait(trait_frugal):
+        sim.add_trait(trait_frugal)
+
     trait_genderoptions_attractedto_notfemale = instance_manager.get(get_resource_key(TRAIT_GENDEROPTIONS_ATTRACTEDTO_NOTFEMALE, Types.TRAIT))
     if sim.has_trait(trait_genderoptions_attractedto_notfemale):
         sim.remove_trait(trait_genderoptions_attractedto_notfemale)
@@ -5199,6 +5319,10 @@ def pbs_othersim(_connection=None):
     trait_roboticsarm_wearing_whitecopper = instance_manager.get(get_resource_key(TRAIT_ROBOTICSARM_WEARING_WHITECOPPER, Types.TRAIT))
     if sim.has_trait(trait_roboticsarm_wearing_whitecopper):
         sim.remove_trait(trait_roboticsarm_wearing_whitecopper)
+
+    trait_selfassured = instance_manager.get(get_resource_key(TRAIT_SELFASSURED, Types.TRAIT))
+    if not sim.has_trait(trait_selfassured):
+        sim.add_trait(trait_selfassured)
 
     trait_sexualorientation_woohoointerests_female = instance_manager.get(get_resource_key(TRAIT_SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, Types.TRAIT))
     if not sim.has_trait(trait_sexualorientation_woohoointerests_female):
@@ -5858,6 +5982,10 @@ def pbs_othersim(_connection=None):
     if sim.has_trait(fametrait_level5):
         sim.remove_trait(fametrait_level5)
 
+    trait_entrepreneur_theknowledge = instance_manager.get(get_resource_key(TRAIT_ENTREPRENEUR_THEKNOWLEDGE, Types.TRAIT))
+    if not sim.has_trait(trait_entrepreneur_theknowledge):
+        sim.add_trait(trait_entrepreneur_theknowledge)
+
     trait_hsexit_earnedged = instance_manager.get(get_resource_key(TRAIT_HSEXIT_EARNEDGED, Types.TRAIT))
     if not sim.has_trait(trait_hsexit_earnedged):
         sim.add_trait(trait_hsexit_earnedged)
@@ -6205,6 +6333,14 @@ def pbs_ss(_connection=None):
     if sim.has_trait(trait_filthdweller):
         sim.remove_trait(trait_filthdweller)
 
+    trait_freeservices = instance_manager.get(get_resource_key(TRAIT_FREESERVICES, Types.TRAIT))
+    if not sim.has_trait(trait_freeservices):
+        sim.add_trait(trait_freeservices)
+
+    trait_frugal = instance_manager.get(get_resource_key(TRAIT_FRUGAL, Types.TRAIT))
+    if not sim.has_trait(trait_frugal):
+        sim.add_trait(trait_frugal)
+
     trait_genderoptions_attractedto_notfemale = instance_manager.get(get_resource_key(TRAIT_GENDEROPTIONS_ATTRACTEDTO_NOTFEMALE, Types.TRAIT))
     if sim.has_trait(trait_genderoptions_attractedto_notfemale):
         sim.remove_trait(trait_genderoptions_attractedto_notfemale)
@@ -6376,6 +6512,10 @@ def pbs_ss(_connection=None):
     trait_roboticsarm_wearing_whitecopper = instance_manager.get(get_resource_key(TRAIT_ROBOTICSARM_WEARING_WHITECOPPER, Types.TRAIT))
     if sim.has_trait(trait_roboticsarm_wearing_whitecopper):
         sim.remove_trait(trait_roboticsarm_wearing_whitecopper)
+
+    trait_selfassured = instance_manager.get(get_resource_key(TRAIT_SELFASSURED, Types.TRAIT))
+    if not sim.has_trait(trait_selfassured):
+        sim.add_trait(trait_selfassured)
 
     trait_sexualorientation_woohoointerests_female = instance_manager.get(get_resource_key(TRAIT_SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, Types.TRAIT))
     if not sim.has_trait(trait_sexualorientation_woohoointerests_female):
@@ -7031,6 +7171,10 @@ def pbs_ss(_connection=None):
 
 
     # Remove or add traits from ss sims
+    trait_alluring = instance_manager.get(get_resource_key(TRAIT_ALLURING, Types.TRAIT))
+    if not sim.has_trait(trait_alluring):
+        sim.add_trait(trait_alluring)
+
     trait_dastardly = instance_manager.get(get_resource_key(TRAIT_DASTARDLY, Types.TRAIT))
     if sim.has_trait(trait_dastardly):
         sim.remove_trait(trait_dastardly)
@@ -7071,9 +7215,17 @@ def pbs_ss(_connection=None):
     if sim.has_trait(trait_gloomy):
         sim.remove_trait(trait_gloomy)
 
+    trait_greatkisser = instance_manager.get(get_resource_key(TRAIT_GREATKISSER, Types.TRAIT))
+    if not sim.has_trait(trait_greatkisser):
+        sim.add_trait(trait_greatkisser)
+
     trait_hsexit_earnedged = instance_manager.get(get_resource_key(TRAIT_HSEXIT_EARNEDGED, Types.TRAIT))
     if not sim.has_trait(trait_hsexit_earnedged):
         sim.add_trait(trait_hsexit_earnedged)
+
+    trait_incrediblyfriendly = instance_manager.get(get_resource_key(TRAIT_INCREDIBLYFRIENDLY, Types.TRAIT))
+    if not sim.has_trait(trait_incrediblyfriendly):
+        sim.add_trait(trait_incrediblyfriendly)
 
     trait_jealous = instance_manager.get(get_resource_key(TRAIT_JEALOUS, Types.TRAIT))
     if sim.has_trait(trait_jealous):
@@ -7083,6 +7235,10 @@ def pbs_ss(_connection=None):
     if sim.has_trait(trait_kleptomaniac):
         sim.remove_trait(trait_kleptomaniac)
 
+    trait_legendary = instance_manager.get(get_resource_key(TRAIT_LEGENDARY, Types.TRAIT))
+    if not sim.has_trait(trait_legendary):
+        sim.add_trait(trait_legendary)
+
     trait_mentor = instance_manager.get(get_resource_key(TRAIT_MENTOR, Types.TRAIT))
     if not sim.has_trait(trait_mentor):
         sim.add_trait(trait_mentor)
@@ -7090,6 +7246,10 @@ def pbs_ss(_connection=None):
     trait_player = instance_manager.get(get_resource_key(TRAIT_PLAYER, Types.TRAIT))
     if not sim.has_trait(trait_player):
         sim.add_trait(trait_player)
+
+    trait_shameless = instance_manager.get(get_resource_key(TRAIT_SHAMELESS, Types.TRAIT))
+    if not sim.has_trait(trait_shameless):
+        sim.add_trait(trait_shameless)
 
     trait_sicknessimmunity = instance_manager.get(get_resource_key(TRAIT_SICKNESSIMMUNITY, Types.TRAIT))
     if not sim.has_trait(trait_sicknessimmunity):
@@ -7122,6 +7282,10 @@ def pbs_ss(_connection=None):
     wickedwhims_attractiveness_trait_simpreference_likes_facialhair_beard = instance_manager.get(get_resource_key(WICKEDWHIMS_ATTRACTIVENESS_TRAIT_SIMPREFERENCE_LIKES_FACIALHAIR_BEARD, Types.TRAIT))
     if not sim.has_trait(wickedwhims_attractiveness_trait_simpreference_likes_facialhair_beard):
         sim.add_trait(wickedwhims_attractiveness_trait_simpreference_likes_facialhair_beard)
+
+    wickedwhims_trait_nudity_nosweat_reward = instance_manager.get(get_resource_key(WICKEDWHIMS_TRAIT_NUDITY_NOSWEAT_REWARD, Types.TRAIT))
+    if not sim.has_trait(wickedwhims_trait_nudity_nosweat_reward):
+        sim.add_trait(wickedwhims_trait_nudity_nosweat_reward)
 
     wickedwhims_trait_relationships_poly = instance_manager.get(get_resource_key(WICKEDWHIMS_TRAIT_RELATIONSHIPS_POLY, Types.TRAIT))
     if not sim.has_trait(wickedwhims_trait_relationships_poly):
@@ -7156,6 +7320,10 @@ def pbs_wwtrait(_connection=None):
     instance_manager = services.get_instance_manager(Types.TRAIT)
 
     # Remove or add traits from sim
+    trait_reward_incest = instance_manager.get(get_resource_key(TRAIT_REWARD_INCEST, Types.TRAIT))
+    if not sim.has_trait(trait_reward_incest):
+        sim.add_trait(trait_reward_incest)
+
     wickedwhims_attractiveness_trait_simpreference_dislikes_bodyshape_breastslarge = instance_manager.get(get_resource_key(WICKEDWHIMS_ATTRACTIVENESS_TRAIT_SIMPREFERENCE_DISLIKES_BODYSHAPE_BREASTSLARGE, Types.TRAIT))
     if sim.has_trait(wickedwhims_attractiveness_trait_simpreference_dislikes_bodyshape_breastslarge):
         sim.remove_trait(wickedwhims_attractiveness_trait_simpreference_dislikes_bodyshape_breastslarge)

@@ -18,17 +18,36 @@ def pbs_bahonors(_connection=None):
 
     # Remove or add traits from all sims
     trait_university_arthistorydegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_ARTHISTORYDEGREEBAHONORS, Types.TRAIT))
-    trait_university_communicationsdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_COMMUNICATIONSDEGREEBAHONORS, Types.TRAIT))
-    trait_university_physicsdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_PHYSICSDEGREEBAHONORS, Types.TRAIT))
-
     if not sim.has_trait(trait_university_arthistorydegreebahonors):
         sim.add_trait(trait_university_arthistorydegreebahonors)
 
+    trait_university_communicationsdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_COMMUNICATIONSDEGREEBAHONORS, Types.TRAIT))
     if not sim.has_trait(trait_university_communicationsdegreebahonors):
         sim.add_trait(trait_university_communicationsdegreebahonors)
 
-    if not sim.has_trait(trait_university_physicsdegreebahonors):
-        sim.add_trait(trait_university_physicsdegreebahonors)
+    trait_university_culinaryartsdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_CULINARYARTSDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_culinaryartsdegreebahonors):
+        sim.add_trait(trait_university_culinaryartsdegreebahonors)
+
+    trait_university_dramadegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_DRAMADEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_dramadegreebahonors):
+        sim.add_trait(trait_university_dramadegreebahonors)
+
+    trait_university_fineartdegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_FINEARTDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_fineartdegreebahonors):
+        sim.add_trait(trait_university_fineartdegreebahonors)
+
+    trait_university_historydegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_HISTORYDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_historydegreebahonors):
+        sim.add_trait(trait_university_historydegreebahonors)
+
+    trait_university_languageandliteraturedegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_LANGUAGEANDLITERATUREDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_languageandliteraturedegreebahonors):
+        sim.add_trait(trait_university_languageandliteraturedegreebahonors)
+
+    trait_university_villainydegreebahonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_VILLAINYDEGREEBAHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_villainydegreebahonors):
+        sim.add_trait(trait_university_villainydegreebahonors)
 
 
 @sims4.commands.Command('pbs_bshonors', command_type=sims4.commands.CommandType.Live)
@@ -43,23 +62,29 @@ def pbs_bahonors(_connection=None):
     instance_manager = services.get_instance_manager(Types.TRAIT)
 
     # Remove or add traits from all sims
-    trait_university_arthistorydegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_ARTHISTORYDEGREEBSHONORS, Types.TRAIT))
-    trait_university_communicationsdegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_COMMUNICATIONSDEGREEBSHONORS, Types.TRAIT))
+    trait_university_biologydegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_BIOLOGYDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_biologydegreebshonors):
+        sim.add_trait(trait_university_biologydegreebshonors)
+
+    trait_university_computersciencedegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_COMPUTERSCIENCEDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_computersciencedegreebshonors):
+        sim.add_trait(trait_university_computersciencedegreebshonors)
+
+    trait_university_economicsdegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_ECONOMICSDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_economicsdegreebshonors):
+        sim.add_trait(trait_university_economicsdegreebshonors)
+
     trait_university_physicsdegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_PHYSICSDEGREEBSHONORS, Types.TRAIT))
-
-
-    if not sim.has_trait(trait_university_arthistorydegreebshonors):
-        sim.add_trait(trait_university_arthistorydegreebshonors)
-
-    if not sim.has_trait(trait_university_communicationsdegreebshonors):
-        sim.add_trait(trait_university_communicationsdegreebshonors)
-
     if not sim.has_trait(trait_university_physicsdegreebshonors):
         sim.add_trait(trait_university_physicsdegreebshonors)
 
+    trait_university_psychologydegreebshonors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_PSYCHOLOGYDEGREEBSHONORS, Types.TRAIT))
+    if not sim.has_trait(trait_university_psychologydegreebshonors):
+        sim.add_trait(trait_university_psychologydegreebshonors)
 
-@sims4.commands.Command('pbs_csdegree', command_type=sims4.commands.CommandType.Live)
-def pbs_csdegree(_connection=None):
+
+@sims4.commands.Command('pbs_familyfun', command_type=sims4.commands.CommandType.Live)
+def pbs_familyfun(_connection=None):
     # Get the console output
     output = sims4.commands.CheatOutput(_connection)
 
@@ -70,12 +95,25 @@ def pbs_csdegree(_connection=None):
     instance_manager = services.get_instance_manager(Types.TRAIT)
 
     # Remove or add traits from all sims
-    trait_university_degreetraits_computerscience = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_DEGREETRAITS_COMPUTERSCIENCE, Types.TRAIT))
-    trait_university_degreetraits_type_honors = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_DEGREETRAITS_TYPE_HONORS, Types.TRAIT))
+    trait_reward_incest = instance_manager.get(get_resource_key(TRAIT_REWARD_INCEST, Types.TRAIT))
+
+    if not sim.has_trait(trait_reward_incest):
+        sim.add_trait(trait_reward_incest)
 
 
-    if not sim.has_trait(trait_university_degreetraits_computerscience):
-        sim.add_trait(trait_university_degreetraits_computerscience)
+@sims4.commands.Command('pbs_bartender', command_type=sims4.commands.CommandType.Live)
+def pbs_bartender(_connection=None):
+    # Get the console output
+    output = sims4.commands.CheatOutput(_connection)
 
-    if not sim.has_trait(trait_university_degreetraits_type_honors):
-        sim.add_trait(trait_university_degreetraits_type_honors)
+    # Get the sim_info for the active sim
+    sim = services.client_manager().get(_connection).active_sim.sim_info
+
+    # Get the tuned trait instance from the tuning instance manager
+    instance_manager = services.get_instance_manager(Types.TRAIT)
+
+    # Remove or add traits from all sims
+    trait_university_bartenderdegree = instance_manager.get(get_resource_key(TRAIT_UNIVERSITY_BARTENDERDEGREE, Types.TRAIT))
+
+    if not sim.has_trait(trait_university_bartenderdegree):
+        sim.add_trait(trait_university_bartenderdegree)
