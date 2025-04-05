@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<I c="SuperInteraction" i="interaction" m="interactions.base.super_interaction" n="PBS_SetActingMax" s="5870324053781836804">
+  <super_affordance>True</super_affordance>
+  <basic_content affordance_list="True"/>
+  <display_name>Max Acting Skill</display_name>
+  <category>PrettyBoySims</category>
+  <target_type>SIM</target_type>
+  <test_globals>
+    <tests>
+      <test type="sim_info" who="TargetSim"/>
+    </tests>
+  </test_globals>
+  <pie_menu_priority>100</pie_menu_priority>
+  <interaction_category>
+    <category_id>PrettyBoySims</category_id>
+  </interaction_category>
+</I>

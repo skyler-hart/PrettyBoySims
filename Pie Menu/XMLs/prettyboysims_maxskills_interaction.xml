@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<I c="SuperInteraction" i="interaction" m="interactions.base.super_interaction" n="PBS_SetSkillsMax" s="7759442746073444137">
+  <basic_content>
+    <animation_ref/>
+    <loot_list/>
+    <outcome>
+      <outcome loot_list=""/>
+    </outcome>
+    <visibility>
+      <tests>
+        <test_set>
+          <sim_info_tests>
+            <ages>
+              <age>CHILD</age>
+              <age>TEEN</age>
+              <age>YOUNGADULT</age>
+              <age>ADULT</age>
+              <age>ELDER</age>
+            </ages>
+          </sim_info_tests>
+        </test_set>
+      </tests>
+    </visibility>
+  </basic_content>
+  <display_name>Max All Skills</display_name>
+  <interaction_category>PrettyBoySims</interaction_category>
+  <target_type>SIM</target_type>
+  <super_affordance>
+    <python_class>prettyboysims.MaxSkillsInteraction</python_class>
+  </super_affordance>
+</I>
