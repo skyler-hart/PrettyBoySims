@@ -33,34 +33,34 @@ def _apply_skills(sim, output, skill_manager, skills):
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
     "me": {
-        "add": [164099],
+        "add": [],
         "remove": [],
         "IfFemaleAdd": [],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [16704],
+        "IfTeenAdd": [3455194433],
+        "skills": [5255876730914093336, 4641759162532272279, 11311871620839888931, 13681797894157322134, 15755652231701198849, 18282882584276959514, 10913272126822913979],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
     },
     "my": {
-        "add": [168006],
+        "add": [],
         "remove": [],
-        "IfFemaleAdd": [],
+        "IfFemaleAdd": [1690154921011321723],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [],
+        "IfTeenAdd": [3455194433],
+        "skills": [5255876730914093336, 4641759162532272279, 11311871620839888931, 13681797894157322134, 15755652231701198849, 18282882584276959514, 12503627023949270877, 16649350022740743409],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
     },
     "maid": {
-        "add": [170584],
+        "add": [],
         "remove": [],
         "IfFemaleAdd": [],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [],
+        "IfTeenAdd": [3455194433],
+        "skills": [11311871620839888931, 12503627023949270877, 16649350022740743409],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
@@ -70,8 +70,8 @@ ghostshell_trait_commands = {
         "remove": [],
         "IfFemaleAdd": [],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [],
+        "IfTeenAdd": [3455194433],
+        "skills": [11311871620839888931, 12503627023949270877, 16649350022740743409],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
@@ -79,10 +79,10 @@ ghostshell_trait_commands = {
     "service": {
         "add": [],
         "remove": [],
-        "IfFemaleAdd": [],
+        "IfFemaleAdd": [1690154921011321723, 13329958653635829193, 17143627558403278375, 4962284592606331639, 4027040388],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [],
+        "IfTeenAdd": [3455194433],
+        "skills": [11311871620839888931, 16649350022740743409, 231908, 16659, 16700, 16704],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
@@ -92,8 +92,8 @@ ghostshell_trait_commands = {
         "remove": [],
         "IfFemaleAdd": [],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [],
+        "IfTeenAdd": [3455194433],
+        "skills": [11311871620839888931, 12503627023949270877, 16649350022740743409],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
@@ -103,14 +103,15 @@ ghostshell_trait_commands = {
         "remove": [],
         "IfFemaleAdd": [],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [],
+        "IfTeenAdd": [3455194433],
+        "skills": [11311871620839888931, 12503627023949270877, 16649350022740743409],
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
     },
     # Add more command blocks from spreadsheet here as needed
 }
+
 
 for command, actions in ghostshell_trait_commands.items():
     def make_command(command, actions):
