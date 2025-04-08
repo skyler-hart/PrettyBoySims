@@ -6,29 +6,39 @@ import services
 from sims4.resources import Types, get_resource_key
 
 # Helper functions for traits and skills
+
+
 def _apply_traits(sim, output, trait_manager, traits):
     for trait_id in traits:
         trait = trait_manager.get(get_resource_key(trait_id, Types.TRAIT))
         if trait and not sim.has_trait(trait):
             sim.add_trait(trait)
-            output(f"Added trait {trait_id}")
+            output(f"Added trait: {trait.__name__} (ID {trait_id})")
+
 
 def _remove_traits(sim, output, trait_manager, traits):
     for trait_id in traits:
         trait = trait_manager.get(get_resource_key(trait_id, Types.TRAIT))
         if trait and sim.has_trait(trait):
             sim.remove_trait(trait)
-            output(f"Removed trait {trait_id}")
+            output(f"Removed trait {trait.__name__} (ID {trait_id})")
+
 
 def _apply_skills(sim, output, skill_manager, skills):
+    fitness_levels = [0, 100, 1540, 3700, 7300, 12580, 19780, 29920, 43360, 60460, 81580]
+
     for skill_id in skills:
         skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
         if skill:
             tracker = sim.get_tracker(skill)
             if not tracker.has_statistic(skill):
                 tracker.add_statistic(skill)
-            tracker.set_value(skill, float(skill.max_level))
-            output(f"Maxed skill {skill_id}")
+            stat = tracker.get_statistic(skill, add=True)
+            if stat:
+                stat.set_value(fitness_levels[10])
+                output(f"Skill maxed: {skill.__name__} from ID {skill_id}")
+            else:
+                output(f"Failed to apply skill {skill.__name__} from ID {skill_id}")
         else:
             output(f"Failed to resolve skill {skill_id}")
 
@@ -79,15 +89,15 @@ ghostshell_trait_commands = {
         "IfToddlerSkills": []
     },
     "service": {
-        "add": [35504, 114410, 234887, 234566, 32111],
+        "add": [176123, 199156, 35504, 114410, 234887, 234566, 32111, 276492, 276493, 354602, 26393, 27942, 9602, 183034, 26392, 291675, 291674, 26639, 185795, 27328, 2639086337, 16286435799976315035, 13777170317512132992, 3256270857, 1646527862],
         "remove": [],
         "IfFemaleAdd": [1690154921011321723, 13329958653635829193, 17143627558403278375, 4962284592606331639, 18084875558065733633, 4027040388],
         "IfFemaleRemove": [],
         "IfTeenAdd": [3455194433],
-        "skills": [231908, 16659, 16700, 16704],
+        "skills": [231908, 16659, 16700, 16704, 11311871620839888931, 16649350022740743409],
         "IfTeenSkills": [],
         "IfChildSkills": [],
-        "IfToddlerSkills": []
+        "IfToddlerSkills": [],
     },
     "slave": {
         "add": [],
@@ -110,37 +120,14 @@ ghostshell_trait_commands = {
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": []
-    },
-    "ww": {
-        "add": [],
-        "remove": [],
-        "IfFemaleAdd": [],
-        "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [5255876730914093336, 4641759162532272279, 11311871620839888931, 18282882584276959514],
-        "IfTeenSkills": [],
-        "IfChildSkills": [],
-        "IfToddlerSkills": []
-    },
-    "sub": {
-        "add": [],
-        "remove": [],
-        "IfFemaleAdd": [],
-        "IfFemaleRemove": [],
-        "IfTeenAdd": [],
-        "skills": [16649350022740743409],
-        "IfTeenSkills": [],
-        "IfChildSkills": [],
-        "IfToddlerSkills": []
     }
-    # Add more command blocks from spreadsheet here as needed
 }
-
 
 for command, actions in ghostshell_trait_commands.items():
     def make_command(command, actions):
         @sims4.commands.Command(f'gs.{command}', command_type=sims4.commands.CommandType.Live)
         def command_fn(*args, _connection=None):
+            from sims.sim_info_types import BodyType
             output = sims4.commands.CheatOutput(_connection)
             client = services.client_manager().get(_connection)
             if not client:
@@ -155,23 +142,22 @@ for command, actions in ghostshell_trait_commands.items():
             trait_manager = services.get_instance_manager(Types.TRAIT)
             skill_manager = services.get_instance_manager(Types.STATISTIC)
 
-            # Always remove these traits
             _remove_traits(sim, output, trait_manager, actions.get("remove", []))
             if sim.is_female:
                 _remove_traits(sim, output, trait_manager, actions.get("IfFemaleRemove", []))
 
             if sim.is_female:
                 _apply_traits(sim, output, trait_manager, actions.get("IfFemaleAdd", []))
-            if sim.age == 2:  # Teen
+            if sim.age == 2:
                 _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
             _apply_traits(sim, output, trait_manager, actions.get("add", []))
 
             _apply_skills(sim, output, skill_manager, actions.get("skills", []))
-            if sim.age == 2:  # Teen
+            if sim.age == 2:
                 _apply_skills(sim, output, skill_manager, actions.get("IfTeenSkills", []))
-            elif sim.age == 1:  # Child
+            elif sim.age == 1:
                 _apply_skills(sim, output, skill_manager, actions.get("IfChildSkills", []))
-            elif sim.age == 0:  # Toddler
+            elif sim.age == 0:
                 _apply_skills(sim, output, skill_manager, actions.get("IfToddlerSkills", []))
 
         return command_fn
