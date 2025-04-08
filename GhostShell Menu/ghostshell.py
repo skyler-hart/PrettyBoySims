@@ -45,7 +45,13 @@ def _apply_skills(sim, output, skill_manager, skills):
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
     "me": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [],
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "remove": [],
         "IfFemaleAdd": [],
         "IfFemaleRemove": [],
@@ -56,6 +62,9 @@ ghostshell_trait_commands = {
         "IfToddlerSkills": []
     },
     "my": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [],
         "remove": [],
         "IfFemaleAdd": [1690154921011321723],
@@ -66,7 +75,24 @@ ghostshell_trait_commands = {
         "IfChildSkills": [],
         "IfToddlerSkills": []
     },
+    "myplayed": {
+        "IfChildAdd": [98698],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
+        "add": [176123, 199156, 27419, 26388, 32110, 26199, 32111, 276492, 276496, 354602, 26389, 27942, 27086, 183024, 291675, 26439, 231050, 26639, 32621, 185795, 249731, 183508, 183507, 27328, 185794, 27772, 15163032885896298056, 17070969323678292030, 460148084400330375],
+        "remove": [183505, 183506],
+        "IfFemaleAdd": [26200, 276493, 27080, 29618, 291674, 258765, 269262, 270900, 18084875558065733633, 13329958653635829193, 17143627558403278375, 4962284592606331639],
+        "IfFemaleRemove": [],
+        "IfTeenAdd": [3455194433, 277740],
+        "skills": [11311871620839888931, 104198, 16705, 16659, 16704, 16706, 117858],
+        "IfTeenSkills": [],
+        "IfChildSkills": [16718, 16719, 16720, 16721],
+        "IfToddlerSkills": [140170, 140706, 136140, 144913, 140504]
+    },
     "maid": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [],
         "remove": [],
         "IfFemaleAdd": [],
@@ -78,6 +104,9 @@ ghostshell_trait_commands = {
         "IfToddlerSkills": []
     },
     "nanny": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [],
         "remove": [],
         "IfFemaleAdd": [],
@@ -89,6 +118,9 @@ ghostshell_trait_commands = {
         "IfToddlerSkills": []
     },
     "service": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [176123, 199156, 35504, 114410, 234887, 234566, 32111, 276492, 276493, 354602, 26393, 27942, 9602, 183034, 26392, 291675, 291674, 26639, 185795, 27328, 2639086337, 16286435799976315035, 13777170317512132992, 3256270857, 1646527862],
         "remove": [],
         "IfFemaleAdd": [1690154921011321723, 13329958653635829193, 17143627558403278375, 4962284592606331639, 18084875558065733633, 4027040388],
@@ -100,6 +132,9 @@ ghostshell_trait_commands = {
         "IfToddlerSkills": [],
     },
     "slave": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [],
         "remove": [],
         "IfFemaleAdd": [],
@@ -111,6 +146,9 @@ ghostshell_trait_commands = {
         "IfToddlerSkills": []
     },
     "hot": {
+        "IfChildAdd": [],
+        "IfToddlerAdd": [],
+        "IfMaleAdd": [],
         "add": [],
         "remove": [],
         "IfFemaleAdd": [],
@@ -127,15 +165,32 @@ for command, actions in ghostshell_trait_commands.items():
     def make_command(command, actions):
         @sims4.commands.Command(f'gs.{command}', command_type=sims4.commands.CommandType.Live)
         def command_fn(*args, _connection=None):
+            from relationships.relationship_tracker import RelationshipTrackType
             from sims.sim_info_types import BodyType
-            output = sims4.commands.CheatOutput(_connection)
-            client = services.client_manager().get(_connection)
-            if not client:
-                output("No client found.")
-                return
-
+            from sims.sim_info_manager import SimInfoManager
             sim = client.active_sim.sim_info
             if not sim:
+                output("No active sim.")
+                return
+
+            # Get the household and sims in it
+            household = sim.household
+            if command == "myplayed":
+                if household:
+                    household.funds = 500000
+                    sims_in_house = list(household.sim_info_gen())
+                    for sim_a in sims_in_house:
+                        for sim_b in sims_in_house:
+                            if sim_a is not sim_b:
+                                sim_a.relationship_tracker.add_relationship_score(sim_b.sim_id, 100, RelationshipTrackType.FRIENDSHIP_TRACK)
+
+                    # Get Bob Dow by name and make each household sim friends with him
+                    sim_manager = services.sim_info_manager()
+                    for other_sim in sim_manager.get_all():
+                        if other_sim.full_name.lower() == "bob dow":
+                            for sim_a in sims_in_house:
+                                sim_a.relationship_tracker.add_relationship_score(other_sim.sim_id, 100, RelationshipTrackType.FRIENDSHIP_TRACK)
+                            break
                 output("No active sim.")
                 return
 
@@ -148,8 +203,14 @@ for command, actions in ghostshell_trait_commands.items():
 
             if sim.is_female:
                 _apply_traits(sim, output, trait_manager, actions.get("IfFemaleAdd", []))
+            else:
+                _apply_traits(sim, output, trait_manager, actions.get("IfMaleAdd", []))
             if sim.age == 2:
                 _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
+            elif sim.age == 1:
+                _apply_traits(sim, output, trait_manager, actions.get("IfChildAdd", []))
+            elif sim.age == 0:
+                _apply_traits(sim, output, trait_manager, actions.get("IfToddlerAdd", []))
             _apply_traits(sim, output, trait_manager, actions.get("add", []))
 
             _apply_skills(sim, output, skill_manager, actions.get("skills", []))
