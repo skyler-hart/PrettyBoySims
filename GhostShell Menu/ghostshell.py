@@ -48,7 +48,7 @@ def _apply_skills(sim, output, skill_manager, skills):
                         stat.mark_dirty()
                         stat.show_on_ui = True
                     except AttributeError:
-                        output(f"Stat {skill.__name__} has no mark_dirty attribute, fallback mode engaged.")
+                        output(f"Skill fallback mode engaged for {skill.__name__}.")
                 else:
                     output(f"Fallback failed to apply skill {skill.__name__} from ID {skill_id}")
                 continue
@@ -135,7 +135,7 @@ ghostshell_trait_commands = {
             GSTrait.WORLDLYKNOWLEDGE, GSTrait.WICKEDWHIMS_NUDITYAVOIDER, GSTrait.WICKEDWHIMS_RELATIONSHIPS_POLY,
             GSTrait.WICKEDWHIMS_SEX_ALWAYSACCEPT, GSTrait.WICKEDWHIMS_SEX_ATTRIBUTE_GENEROUSLOVER
         ],
-        "IfTeenAdd": [GSTrait.HSEXIT_GRADUATE_EARLY],
+        "IfTeenAdd": [GSTrait.HSEXIT_GRADUATE_EARLY, GSTrait.WICKEDWHIMS_POSTPUBERTYTEEN],
         "IfMaleAdd": [
             GSTrait.BUSINESS_SAVVY, GSTrait.ICONIC, GSTrait.MOTIVATINGSPEAKER,
             GSTrait.UNIVERSITY_COMMUNICATIONSDEGREEBSHONORS, GSTrait.UNIVERSITY_ECONOMICSDEGREEBSHONORS, GSTrait.WICKEDWHIMS_SEX_CUCKOLD
@@ -218,40 +218,55 @@ for command, actions in ghostshell_trait_commands.items():
             skill_manager = services.get_instance_manager(Types.STATISTIC)
 
             if command in ["my", "service"] and sim.career_tracker is not None:
-                if sim.age == 2:
+                if sim.age == GSAge.TEEN:
                     school = sim.career_tracker.get_career_by_uid(137624)
                     if school:
                         sim.career_tracker.remove_career(school)
                         output("Removed school career from teen sim.")
-                elif command == "my" and sim.age == 1:
+                elif command == "my" and sim.age == GSAge.CHILD:
                     school = sim.career_tracker.get_career_by_uid(135606)
                     if school:
                         sim.career_tracker.remove_career(school)
                         output("Removed school career from child sim.")
 
+            # Remove traits
             _remove_traits(sim, output, trait_manager, actions.get("remove", []))
             if sim.is_female:
                 _remove_traits(sim, output, trait_manager, actions.get("IfFemaleRemove", []))
+            elif sim.is_male:
+                _remove_traits(sim, output, trait_manager, actions.get("IfMaleRemove", []))
 
+            # Apply traits
             if sim.is_female:
                 _apply_traits(sim, output, trait_manager, actions.get("IfFemaleAdd", []))
             else:
                 _apply_traits(sim, output, trait_manager, actions.get("IfMaleAdd", []))
-            if sim.age == 2:
-                _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
-            elif sim.age == 1:
-                _apply_traits(sim, output, trait_manager, actions.get("IfChildAdd", []))
-            elif sim.age == 0:
+
+            if sim.age == GSAge.TODDLER:
                 _apply_traits(sim, output, trait_manager, actions.get("IfToddlerAdd", []))
+            elif sim.age == GSAge.CHILD:
+                _apply_traits(sim, output, trait_manager, actions.get("IfChildAdd", []))
+            elif sim.age == GSAge.TEEN:
+                _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
+
             _apply_traits(sim, output, trait_manager, actions.get("add", []))
 
-            _apply_skills(sim, output, skill_manager, actions.get("skills", []))
-            if sim.age == 2:
-                _apply_skills(sim, output, skill_manager, actions.get("IfTeenSkills", []))
-            elif sim.age == 1:
-                _apply_skills(sim, output, skill_manager, actions.get("IfChildSkills", []))
-            elif sim.age == 0:
+            # Add age based skills
+            if sim.age == GSAge.TODDLER:
                 _apply_skills(sim, output, skill_manager, actions.get("IfToddlerSkills", []))
+            elif sim.age == GSAge.CHILD:
+                _apply_skills(sim, output, skill_manager, actions.get("IfChildSkills", []))
+            elif sim.age == GSAge.TEEN:
+                _apply_skills(sim, output, skill_manager, actions.get("IfTeenSkills", []))
+
+            # Add gender based skills
+            if sim.is_female:
+                _apply_skills(sim, output, skill_manager, actions.get("IfFemaleSkills", []))
+            elif sim.is_male:
+                _apply_skills(sim, output, skill_manager, actions.get("IfMaleSkills", []))
+
+            # Apply general skills
+            _apply_skills(sim, output, skill_manager, actions.get("skills", []))
 
         return command_fn
 
