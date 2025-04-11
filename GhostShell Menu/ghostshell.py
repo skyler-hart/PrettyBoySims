@@ -1,12 +1,115 @@
 # ghostshell_main.pyc was compiled from the following Python source code:
 
 import os
-import sims4.commands
-import services
-from sims4.resources import Types, get_resource_key
-from relationships.relationship_bit import RelationshipBit
+import sims4.commands # type: ignore
+import services # type: ignore
+from sims4.resources import Types, get_resource_key # type: ignore
+Types.RELATIONSHIP_TRACK = 0x53E9A2C5  # Manually added constant
+Types.TRAIT = getattr(Types, "TRAIT", 0xB13B13F)
+Types.STATISTIC = getattr(Types, "STATISTIC", 0x7CA5C2DA)
+from relationships.relationship_bit import RelationshipBit # type: ignore
+
+# Define constants
+AGE_BABY = 0
+AGE_INFANT = 1
+AGE_TODDLER = 2
+AGE_CHILD = 3
+AGE_TEEN = 4
+AGE_YOUNGADULT = 5
+AGE_ADULT = 6
+AGE_ELDER = 7
 
 # Helper functions for traits and skills
+def find_sim_by_name(first_name, last_name):
+    household_manager = services.household_manager()
+    for household in household_manager.get_all():
+        for sim in household.sim_info_gen():
+            if sim.first_name.lower() == first_name.lower() and sim.last_name.lower() == last_name.lower():
+                return sim  # Break early when found
+    return None
+
+def resolve_sim(args, client):
+    """
+    Resolve a Sim based on the provided arguments. If no arguments are provided,
+    return the active Sim. If a name or Sim ID is provided, attempt to find the Sim.
+
+    Args:
+        args: List of arguments passed to the command.
+        client: The client object to get the active Sim.
+
+    Returns:
+        The resolved SimInfo object or the active Sim if no arguments are provided.
+    """
+    if not args:
+        return client.active_sim.sim_info
+
+    arg = args[0].lower().replace('"', '')
+
+    # Check if it's simid:<id>
+    if arg.startswith("simid:"):
+        try:
+            sim_id = int(arg.replace("simid:", ""))
+            sim_info = services.sim_info_manager().get(sim_id)
+            if sim_info:
+                return sim_info
+        except ValueError:
+            pass
+
+    # Otherwise, treat it as a name and use find_sim_by_name
+    name_arg = " ".join(args).strip().replace('"', '')
+    first_name, *last_name = name_arg.split(" ")
+    last_name = " ".join(last_name) if last_name else ""
+    sim = find_sim_by_name(first_name, last_name)
+
+    if sim:
+        return sim
+
+    # Fallback to the active Sim if no match is found
+    return client.active_sim.sim_info
+
+def process_sim_traits_and_skills(sim, output, actions):
+    """Helper function to process traits and skills for a Sim."""
+    trait_manager = services.get_instance_manager(Types.TRAIT)
+    skill_manager = services.get_instance_manager(Types.STATISTIC)
+
+    # Remove traits
+    _remove_traits(sim, output, trait_manager, actions.get("remove", []))
+    if sim.is_female:
+        _remove_traits(sim, output, trait_manager, actions.get("IfFemaleRemove", []))
+    elif sim.is_male:
+        _remove_traits(sim, output, trait_manager, actions.get("IfMaleRemove", []))
+
+    # Apply age-specific skills and general skills
+    if sim.age == AGE_TEEN:
+        output("Applying teen-specific skills...")
+        _apply_skills(sim, output, skill_manager, actions.get("IfTeenSkills", []))
+    elif sim.age == AGE_CHILD:
+        output("Applying child-specific skills...")
+        _apply_skills(sim, output, skill_manager, actions.get("IfChildSkills", []))
+    elif sim.age == AGE_TODDLER:
+        output("Applying toddler-specific skills...")
+        _apply_skills(sim, output, skill_manager, actions.get("IfToddlerSkills", []))
+    else:
+        output(f"Sim age {sim.age} does not match any specific age group for skills.")
+
+    _apply_skills(sim, output, skill_manager, actions.get("skills", []))
+
+    # Apply traits based on gender
+    if sim.is_female:
+        _apply_traits(sim, output, trait_manager, actions.get("IfFemaleAdd", []))
+    elif sim.is_male:
+        _apply_traits(sim, output, trait_manager, actions.get("IfMaleAdd", []))
+
+    # Apply traits based on age
+    if sim.age == AGE_TEEN:
+        _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
+    elif sim.age == AGE_CHILD:
+        _apply_traits(sim, output, trait_manager, actions.get("IfChildAdd", []))
+    elif sim.age == AGE_TODDLER:
+        _apply_traits(sim, output, trait_manager, actions.get("IfToddlerAdd", []))
+
+    # Apply general traits
+    _apply_traits(sim, output, trait_manager, actions.get("add", []))
 
 
 def _apply_traits(sim, output, trait_manager, traits):
@@ -30,40 +133,49 @@ def _remove_traits(sim, output, trait_manager, traits):
 
 
 def _apply_skills(sim, output, skill_manager, skills):
-    fitness_levels = [0, 100, 1540, 3700, 7300, 12580, 19780, 29920, 43360, 60460, 81580]
+    """
+    Apply a list of skills to a Sim and set them to the maximum level.
+
+    Args:
+        sim: The Sim to apply skills to.
+        output: Function to send debug/output messages.
+        skill_manager: The skill manager to resolve skill IDs.
+        skills: A list of skill IDs to apply.
+    """
+    max_skill_value = 81580  # Maximum skill value
 
     for skill_id in skills:
-        output(f"Resolving skill ID: {skill_id}")
+        output(f"Attempting to resolve skill ID: {skill_id}")
         skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
-        output(f"Resolved skill: {getattr(skill, '__name__', 'None')}" if skill else f"Failed to resolve skill {skill_id}")
-        if skill:
-            if not getattr(skill, 'is_skill', False) or not getattr(skill, 'is_statistic', False) or not getattr(skill, 'is_visible', False):
-                output(f"Skipping skill {skill_id} - not a valid visible skill for this sim. Attempting fallback apply.")
-                tracker = sim.get_tracker(skill)
-                if not tracker.has_statistic(skill):
-                    tracker.add_statistic(skill)
-                stat = tracker.get_statistic(skill, add=True)
-                if stat:
-                    stat.set_value(fitness_levels[10])
-                    try:
-                        stat.mark_dirty()
-                        stat.show_on_ui = True
-                    except AttributeError:
-                        output(f"Stat {skill.__name__} has no mark_dirty attribute, fallback mode engaged.")
-                    output(f"Fallback skill maxed: {skill.__name__} from ID {skill_id}")
-                else:
-                    output(f"Fallback failed to apply skill {skill.__name__} from ID {skill_id}")
+
+        if not skill:
+            output(f"Error: Failed to resolve skill ID {skill_id}. Skipping...")
+            continue
+
+        output(f"Resolved skill: {skill.__name__} (ID {skill_id})")
+
+        try:
+            # Get the skill tracker for the Sim
+            tracker = sim.get_tracker(skill)
+            if not tracker:
+                output(f"Error: No tracker found for skill {skill.__name__}. Skipping...")
                 continue
+
+            # Add the skill if it doesn't already exist
             if not tracker.has_statistic(skill):
                 tracker.add_statistic(skill)
+
+            # Get the skill statistic and set its value
             stat = tracker.get_statistic(skill, add=True)
             if stat:
-                stat.set_value(fitness_levels[10])
-                output(f"Skill maxed: {skill.__name__} from ID {skill_id}")
+                stat.set_value(max_skill_value)
+                stat.show_on_ui = True  # Ensure the skill is visible in the UI
+                output(f"Successfully maxed skill: {skill.__name__} (ID {skill_id})")
             else:
-                output(f"Failed to apply skill {skill.__name__} from ID {skill_id}")
-        else:
-            output(f"Failed to resolve skill {skill_id}")
+                output(f"Error: Failed to retrieve statistic for skill {skill.__name__}.")
+        except Exception as e:
+            output(f"Error applying skill {skill.__name__} (ID {skill_id}): {e}")
+
 
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
@@ -211,55 +323,30 @@ for command, actions in ghostshell_trait_commands.items():
         def command_fn(*args, _connection=None):
             client = services.client_manager().get(_connection)
             output = sims4.commands.CheatOutput(_connection)
-            sim = client.active_sim.sim_info
-            household = sim.household
+            sim = resolve_sim(args, client)
 
-            # Get the household and sims in it
+            # Process traits and skills using the helper function
+            process_sim_traits_and_skills(sim, output, actions)
+
             # Auto-pay bills for the household
+            household = sim.household
             if household and hasattr(household, 'bills_manager'):
                 bills = household.bills_manager
                 if hasattr(bills, 'pay_all_bills'):
                     bills.pay_all_bills()
                     output("Auto-paid household bills.")
 
-            trait_manager = services.get_instance_manager(Types.TRAIT)
-            skill_manager = services.get_instance_manager(Types.STATISTIC)
+            # Remove school career if applicable
+            if command in ["me", "my", "service"] and sim.career_tracker is not None:
+                school = None
+                if sim.age == AGE_TEEN:
+                    school = sim.career_tracker.get_career_by_uid(137624)  # High School
+                elif sim.age == AGE_CHILD:
+                    school = sim.career_tracker.get_career_by_uid(135606)  # Grade School
 
-            if command in ["my", "service"] and sim.career_tracker is not None:
-                if sim.age == 2:
-                    school = sim.career_tracker.get_career_by_uid(137624)
-                    if school:
-                        sim.career_tracker.remove_career(school)
-                        output("Removed school career from teen sim.")
-                elif command == "my" and sim.age == 1:
-                    school = sim.career_tracker.get_career_by_uid(135606)
-                    if school:
-                        sim.career_tracker.remove_career(school)
-                        output("Removed school career from child sim.")
-
-            _remove_traits(sim, output, trait_manager, actions.get("remove", []))
-            if sim.is_female:
-                _remove_traits(sim, output, trait_manager, actions.get("IfFemaleRemove", []))
-
-            if sim.is_female:
-                _apply_traits(sim, output, trait_manager, actions.get("IfFemaleAdd", []))
-            else:
-                _apply_traits(sim, output, trait_manager, actions.get("IfMaleAdd", []))
-            if sim.age == 2:
-                _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
-            elif sim.age == 1:
-                _apply_traits(sim, output, trait_manager, actions.get("IfChildAdd", []))
-            elif sim.age == 0:
-                _apply_traits(sim, output, trait_manager, actions.get("IfToddlerAdd", []))
-            _apply_traits(sim, output, trait_manager, actions.get("add", []))
-
-            _apply_skills(sim, output, skill_manager, actions.get("skills", []))
-            if sim.age == 2:
-                _apply_skills(sim, output, skill_manager, actions.get("IfTeenSkills", []))
-            elif sim.age == 1:
-                _apply_skills(sim, output, skill_manager, actions.get("IfChildSkills", []))
-            elif sim.age == 0:
-                _apply_skills(sim, output, skill_manager, actions.get("IfToddlerSkills", []))
+                if school:
+                    sim.career_tracker.remove_career(school)
+                    output(f"Removed school career from {'teen' if sim.age == AGE_TEEN else 'child'} sim.")
 
         return command_fn
 
@@ -267,10 +354,18 @@ for command, actions in ghostshell_trait_commands.items():
 
 @sims4.commands.Command('gs.lovebob', command_type=sims4.commands.CommandType.Live)
 def love_bob_command(*args, _connection=None):
+    from sims4.resources import Types, get_resource_key  # type: ignore # ensure resolve_sim has access
     client = services.client_manager().get(_connection)
     output = sims4.commands.CheatOutput(_connection)
-    sim = client.active_sim.sim_info
+    sim = resolve_sim(args, client)
 
+    # Force -JustFriends for baby, infant, toddler, or child
+    if sim.age in (AGE_BABY, AGE_INFANT, AGE_TODDLER, AGE_CHILD):
+        args = list(args)
+        if '-JustFriends' not in args:
+            args.append('-JustFriends')
+
+    # Determine if the relationship should be "just friends"
     just_friends = '-JustFriends' in args
 
     # Traits to add
@@ -283,50 +378,84 @@ def love_bob_command(*args, _connection=None):
             output(f"Added trait: {trait.__name__} (ID {trait_id})")
 
     # Find Bob Dow and set relationship
-    household_manager = services.household_manager()
-    found_bob = False
-    for household in household_manager.get_all():
-        for other_sim in household.sim_info_gen():
-            if other_sim.full_name.lower() == "bob dow":
-                sim.relationship_tracker.add_relationship_score(other_sim.sim_id, 100, "friendship")
-                if not just_friends:
-                    tracker = sim.relationship_tracker
-                    bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
-                    bit = bit_manager.get(get_resource_key(15745, Types.RELATIONSHIP_BIT))
-                    if bit:
-                        tracker.add_relationship_bit(other_sim.sim_id, bit)
-                        output("Romantic interest set with Bob Dow")
-                else:
-                    output("Set as friends with Bob Dow only 💬")
-                found_bob = True
-                break
-        if found_bob:
-            break
-    if not found_bob:
-        output("Bob Dow not found in current game session")
+    bob_dow = find_sim_by_name("Bob", "Dow")
+    if bob_dow:
+        track_manager = services.get_instance_manager(Types.RELATIONSHIP_TRACK)
+        friendship_key = get_resource_key(0x03B33, Types.RELATIONSHIP_TRACK)
+        romance_key = get_resource_key(0x03B35, Types.RELATIONSHIP_TRACK)
+        friendship_track = track_manager.get(friendship_key)
+        romance_track = track_manager.get(romance_key)
+
+        if not friendship_track or not hasattr(friendship_track, 'track_type'):
+            output("Error: Invalid friendship track object")
+            return
+        if not romance_track or not hasattr(romance_track, 'track_type'):
+            output("Error: Invalid romance track object")
+            return
+
+        relationship = sim.relationship_tracker._get_relationship(bob_dow.sim_id)
+        relationship.track_tracker.load_data_if_needed()
+        sim.relationship_tracker.set_relationship_score(bob_dow.sim_id, 100, friendship_track)
+        score = sim.relationship_tracker.get_relationship_score(bob_dow.sim_id, friendship_track)
+        output(f"Friendship score with Bob Dow is now {score}")
+
+        can_romance = sim.age in (AGE_TEEN, AGE_YOUNGADULT, AGE_ADULT, AGE_ELDER) and bob_dow.age in (AGE_TEEN, AGE_YOUNGADULT, AGE_ADULT, AGE_ELDER)
+        if not just_friends and can_romance:
+            relationship.track_tracker.load_data_if_needed()
+            sim.relationship_tracker.set_relationship_score(bob_dow.sim_id, 100, romance_track)
+            score = sim.relationship_tracker.get_relationship_score(bob_dow.sim_id, romance_track)
+            output(f"Romance score with Bob Dow is now {score}")
+            tracker = sim.relationship_tracker
+            bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
+            bit = bit_manager.get(get_resource_key(15745, Types.RELATIONSHIP_BIT))
+            if bit:
+                tracker.add_relationship_bit(bob_dow.sim_id, bit)
+                output("Romantic interest set with Bob Dow")
+        else:
+            output(f"Set as friends with Bob Dow only")
+    else:
+        output(f"Bob Dow not found in current game session")
+
+
+@sims4.commands.Command('gs.maxkidskills', command_type=sims4.commands.CommandType.Live)
+def max_kid_skills(*args, _connection=None):
+    client = services.client_manager().get(_connection)
+    output = sims4.commands.CheatOutput(_connection)
+    sim = resolve_sim(args, client)
+
+    skill_manager = services.get_instance_manager(Types.STATISTIC)
+    child_skills = [16718, 16719, 16720, 16721]
+    toddler_skills = [140170, 140706, 136140, 144913, 140504]
+
+    if sim.age == AGE_CHILD:
+        _apply_skills(sim, output, skill_manager, child_skills)
+    elif sim.age == AGE_TODDLER:
+        _apply_skills(sim, output, skill_manager, toddler_skills)
+    else:
+        output("This command only applies to child or toddler Sims.")
 
 
 @sims4.commands.Command('gs.removeschool', command_type=sims4.commands.CommandType.Live)
-def remove_school_command(_connection=None):
+def remove_school_command(*args, _connection=None):
     client = services.client_manager().get(_connection)
     output = sims4.commands.CheatOutput(_connection)
-    sim = client.active_sim.sim_info
+    sim = resolve_sim(args, client)
 
     trait_manager = services.get_instance_manager(Types.TRAIT)
     ged_trait_id = 291086
     ged_trait = trait_manager.get(get_resource_key(ged_trait_id, Types.TRAIT))
 
     if sim.career_tracker is not None:
-        if sim.age == 2:
+        if sim.age == AGE_TEEN:
             school = sim.career_tracker.get_career_by_uid(137624)
             if school:
                 sim.career_tracker.remove_career(school)
-                output("Removed school career from teen sim.")
-        elif sim.age == 1:
+                output(f"Removed school career from teen sim.")
+        elif sim.age == AGE_CHILD:
             school = sim.career_tracker.get_career_by_uid(135606)
             if school:
                 sim.career_tracker.remove_career(school)
-                output("Removed school career from child sim.")
+                output(f"Removed school career from child sim.")
 
     if ged_trait and not sim.has_trait(ged_trait):
         sim.add_trait(ged_trait)
