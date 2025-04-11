@@ -36,29 +36,26 @@ def _apply_skills(sim, output, skill_manager, skills):
     for skill_id in skills:
         skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
         output(f"Resolved skill: {getattr(skill, '__name__', 'None')}" if skill else f"Failed to resolve skill {skill_id}")
-        if skill:
-            if not getattr(skill, 'is_skill', False) or not getattr(skill, 'is_statistic', False) or not getattr(skill, 'is_visible', False):
-                tracker = sim.get_tracker(skill)
-                if not tracker.has_statistic(skill):
-                    tracker.add_statistic(skill)
-                stat = tracker.get_statistic(skill, add=True)
-                if stat:
-                    stat.set_value(skill_levels[10])
-                    try:
-                        stat.mark_dirty()
-                        stat.show_on_ui = True
-                    except AttributeError:
-                        output(f"Skill fallback mode engaged for {skill.__name__}.")
-                else:
-                    output(f"Fallback failed to apply skill {skill.__name__} from ID {skill_id}")
-                continue
-            if not tracker.has_statistic(skill):
-                tracker.add_statistic(skill)
-            stat = tracker.get_statistic(skill, add=True)
-            if stat:
-                stat.set_value(skill_levels[10])
-            else:
-                output(f"Failed to apply skill {skill.__name__} from ID {skill_id}")
+        if not skill:
+            continue
+
+        tracker = sim.get_tracker(skill)
+        if tracker is None:
+            output(f"No tracker found for skill {skill.__name__}. Skipping.")
+            continue
+
+        if not tracker.has_statistic(skill):
+            tracker.add_statistic(skill)
+        stat = tracker.get_statistic(skill, add=True)
+        if stat:
+            stat.set_value(skill_levels[10])
+            try:
+                stat.mark_dirty()
+            except AttributeError:
+                output(f"Skill fallback mode engaged for {skill.__name__}.")
+            stat.show_on_ui = True
+        else:
+            output(f"Failed to apply skill {skill.__name__} from ID {skill_id}")
 
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
