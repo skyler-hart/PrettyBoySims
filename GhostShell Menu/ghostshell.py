@@ -10,6 +10,39 @@ from GS_enums.skills_enum import GSSkill
 from GS_enums.constants_enum import GSAge
 
 # Helper functions for traits and skills
+def resolve_sim(args, client):
+    """
+    Resolves a Sim by name or defaults to the active Sim.
+    Args:
+        args: Command arguments, expected to contain the Sim's first and/or last name.
+        client: The client object to access the active Sim and other Sims.
+
+    Returns:
+        The resolved SimInfo object or None if no match is found.
+    """
+    if not args:
+        return client.active_sim.sim_info  # Default to the active Sim if no arguments are provided
+
+    input_name = " ".join(args).lower()  # Combine arguments into a single name string
+    sim_manager = services.sim_info_manager()
+    matched_sims = []
+
+    for sim_info in sim_manager.get_all():
+        full_name = f"{sim_info.first_name} {sim_info.last_name}".lower()
+        if input_name in full_name:  # Check for partial match
+            matched_sims.append(sim_info)
+
+    if len(matched_sims) == 1:
+        return matched_sims[0]  # Return the single match
+    elif len(matched_sims) > 1:
+        # If multiple matches, log them and return the first match
+        output = sims4.commands.CheatOutput(client.id)
+        output("Multiple Sims matched the name:")
+        for sim in matched_sims:
+            output(f" - {sim.first_name} {sim.last_name} (ID: {sim.sim_id})")
+        return matched_sims[0]  # Default to the first match
+    else:
+        return None  # No match found
 
 
 def _apply_traits(sim, output, trait_manager, traits):
@@ -46,16 +79,22 @@ def _apply_skills(sim, output, skill_manager, skills):
 
         if not tracker.has_statistic(skill):
             tracker.add_statistic(skill)
-        stat = tracker.get_statistic(skill, add=True)
+        stat = None
+        try:
+            stat = tracker.get_statistic(skill, add=True)
+        except Exception as e:
+            output(f"Error getting statistic for skill {skill.__name__}: {e}")
+            continue
+
         if stat:
-            stat.set_value(skill_levels[10])
             try:
+                stat.set_value(skill_levels[10])
                 stat.mark_dirty()
-            except AttributeError:
-                output(f"Skill fallback mode engaged for {skill.__name__}.")
-            stat.show_on_ui = True
+                stat.show_on_ui = True
+            except Exception as e:
+                output(f"Error applying value or UI to skill {skill.__name__}: {e}")
         else:
-            output(f"Failed to apply skill {skill.__name__} from ID {skill_id}")
+            output(f"Tracker returned no statistic for skill {skill.__name__} (ID {skill_id})")
 
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
@@ -275,39 +314,37 @@ def love_bob_command(*args, _connection=None):
     output = sims4.commands.CheatOutput(_connection)
     sim = client.active_sim.sim_info
 
+    # Resolve Bob Dow
+    bob_dow = resolve_sim(["Bob", "Dow"], client)
+    if not bob_dow:
+        output("Bob Dow not found in the game.")
+        return
+
+    # Check if the user wants to set "Just Friends"
     just_friends = '-JustFriends' in args
 
     # Traits to add
-    love_traits = [2503347606, 2425531959, 2308952560, 2819699501]
+    love_traits = [2503347606, 2425531959, 2308952560, 2819699501]  # Replace with enums if available
     trait_manager = services.get_instance_manager(Types.TRAIT)
-    for trait_id in love_traits:
-        trait = trait_manager.get(get_resource_key(trait_id, Types.TRAIT))
-        if trait and not sim.has_trait(trait):
-            sim.add_trait(trait)
-            output(f"Added trait: {trait.__name__} (ID {trait_id})")
+    _apply_traits(sim, output, trait_manager, love_traits)
 
-    # Find Bob Dow and set relationship
-    household_manager = services.household_manager()
-    found_bob = False
-    for household in household_manager.get_all():
-        for other_sim in household.sim_info_gen():
-            if other_sim.full_name.lower() == "bob dow":
-                sim.relationship_tracker.add_relationship_score(other_sim.sim_id, 100, "friendship")
-                if not just_friends:
-                    tracker = sim.relationship_tracker
-                    bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
-                    bit = bit_manager.get(get_resource_key(15745, Types.RELATIONSHIP_BIT))
-                    if bit:
-                        tracker.add_relationship_bit(other_sim.sim_id, bit)
-                        output("Romantic interest set with Bob Dow")
-                else:
-                    output("Set as friends with Bob Dow only 💬")
-                found_bob = True
-                break
-        if found_bob:
-            break
-    if not found_bob:
-        output("Bob Dow not found in current game session")
+    # Set relationship with Bob Dow
+    track_manager = services.get_instance_manager(Types.RELATIONSHIP_TRACK)
+    friendship_track = track_manager.get(get_resource_key(0x03B33, Types.RELATIONSHIP_TRACK))
+    if not friendship_track or not hasattr(friendship_track, 'track_type'):
+        output("Error: Invalid friendship track object")
+        return
+    sim.relationship_tracker.set_relationship_score(bob_dow.sim_id, 100, friendship_track)
+    if not just_friends:
+        bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
+        romantic_bit = bit_manager.get(get_resource_key(15745, Types.RELATIONSHIP_BIT))
+        if romantic_bit:
+            sim.relationship_tracker.add_relationship_bit(bob_dow.sim_id, romantic_bit)
+            output(f"Romantic interest set with {bob_dow.first_name} {bob_dow.last_name}")
+        else:
+            output("Failed to resolve romantic relationship bit.")
+    else:
+        output(f"Set as friends with {bob_dow.first_name} {bob_dow.last_name} only 💬")
 
 
 @sims4.commands.Command('gs.removeschool', command_type=sims4.commands.CommandType.Live)
