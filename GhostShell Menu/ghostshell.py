@@ -96,6 +96,30 @@ def _apply_skills(sim, output, skill_manager, skills):
         else:
             output(f"Tracker returned no statistic for skill {skill.__name__} (ID {skill_id})")
 
+
+def set_relationship(sim, target_sim, friendship_score, romantic_bit_id, just_friends, output, romantic_score=None):
+    """Sets the relationship between two Sims."""
+    sim.relationship_tracker.add_relationship_score(target_sim.sim_id, friendship_score, "friendship")
+
+    if not just_friends:
+        # Ensure both Sims are teen or older for romantic relationships
+        if sim.age >= GSAge.TEEN.value and target_sim.age >= GSAge.TEEN.value:
+            bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
+            romantic_bit = bit_manager.get(get_resource_key(romantic_bit_id, Types.RELATIONSHIP_BIT))
+            if romantic_bit:
+                sim.relationship_tracker.add_relationship_bit(target_sim.sim_id, romantic_bit)
+                output(f"Romantic interest set with {target_sim.first_name} {target_sim.last_name}")
+                # Set romantic score if provided
+                if romantic_score is not None:
+                    sim.relationship_tracker.add_relationship_score(target_sim.sim_id, romantic_score, "romance")
+                    output(f"Romantic relationship score set to {romantic_score} with {target_sim.first_name} {target_sim.last_name}")
+            else:
+                output(f"Failed to resolve romantic relationship bit ID: {romantic_bit_id}")
+        else:
+            output("Romantic relationships can only be set for Sims who are Teen or older.")
+    else:
+        output(f"Set as friends with {target_sim.first_name} {target_sim.last_name} only 💬")
+
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
     "me": {
@@ -328,24 +352,8 @@ def love_bob_command(*args, _connection=None):
     trait_manager = services.get_instance_manager(Types.TRAIT)
     _apply_traits(sim, output, trait_manager, love_traits)
 
-    # Set relationship with Bob Dow
-    track_manager = services.get_instance_manager(Types.RELATIONSHIP_TRACK)
-    friendship_track = track_manager.get(get_resource_key(0x03B33, Types.RELATIONSHIP_TRACK))
-    if not friendship_track or not hasattr(friendship_track, 'track_type'):
-        output("Error: Invalid friendship track object")
-        return
-    sim.relationship_tracker.set_relationship_score(bob_dow.sim_id, 100, friendship_track)
-    if not just_friends:
-        bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
-        romantic_bit = bit_manager.get(get_resource_key(15745, Types.RELATIONSHIP_BIT))
-        if romantic_bit:
-            sim.relationship_tracker.add_relationship_bit(bob_dow.sim_id, romantic_bit)
-            output(f"Romantic interest set with {bob_dow.first_name} {bob_dow.last_name}")
-        else:
-            output("Failed to resolve romantic relationship bit.")
-    else:
-        output(f"Set as friends with {bob_dow.first_name} {bob_dow.last_name} only 💬")
-
+    # Set relationship with Bob Dow using the helper function
+    set_relationship(sim, bob_dow, friendship_score=100, romantic_bit_id=15745, just_friends=just_friends, output=output, romantic_score=100)
 
 @sims4.commands.Command('gs.removeschool', command_type=sims4.commands.CommandType.Live)
 def remove_school_command(_connection=None):
