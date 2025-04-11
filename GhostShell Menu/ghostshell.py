@@ -4,20 +4,11 @@ import os
 import sims4.commands # type: ignore
 import services # type: ignore
 from sims4.resources import Types, get_resource_key # type: ignore
-Types.RELATIONSHIP_TRACK = 0x53E9A2C5  # Manually added constant
-Types.TRAIT = getattr(Types, "TRAIT", 0xB13B13F)
-Types.STATISTIC = getattr(Types, "STATISTIC", 0x7CA5C2DA)
 from relationships.relationship_bit import RelationshipBit # type: ignore
+from enums.traits_enum import GSTraits
+from enums.skills_enum import GSSkills
+from enums.constants_enum import GSAge
 
-# Define constants
-AGE_BABY = 0
-AGE_INFANT = 1
-AGE_TODDLER = 2
-AGE_CHILD = 3
-AGE_TEEN = 4
-AGE_YOUNGADULT = 5
-AGE_ADULT = 6
-AGE_ELDER = 7
 
 # Helper functions for traits and skills
 def find_sim_by_name(first_name, last_name):
@@ -80,13 +71,13 @@ def process_sim_traits_and_skills(sim, output, actions):
         _remove_traits(sim, output, trait_manager, actions.get("IfMaleRemove", []))
 
     # Apply age-specific skills and general skills
-    if sim.age == AGE_TEEN:
+    if sim.age == GSAge.TEEN.value:
         output("Applying teen-specific skills...")
         _apply_skills(sim, output, skill_manager, actions.get("IfTeenSkills", []))
-    elif sim.age == AGE_CHILD:
+    elif sim.age == GSAge.CHILD.value:
         output("Applying child-specific skills...")
         _apply_skills(sim, output, skill_manager, actions.get("IfChildSkills", []))
-    elif sim.age == AGE_TODDLER:
+    elif sim.age == GSAge.TODDLER.value:
         output("Applying toddler-specific skills...")
         _apply_skills(sim, output, skill_manager, actions.get("IfToddlerSkills", []))
     else:
@@ -101,11 +92,11 @@ def process_sim_traits_and_skills(sim, output, actions):
         _apply_traits(sim, output, trait_manager, actions.get("IfMaleAdd", []))
 
     # Apply traits based on age
-    if sim.age == AGE_TEEN:
+    if sim.age == GSAge.TEEN.value:
         _apply_traits(sim, output, trait_manager, actions.get("IfTeenAdd", []))
-    elif sim.age == AGE_CHILD:
+    elif sim.age == GSAge.CHILD.value:
         _apply_traits(sim, output, trait_manager, actions.get("IfChildAdd", []))
-    elif sim.age == AGE_TODDLER:
+    elif sim.age == GSAge.TODDLER.value:
         _apply_traits(sim, output, trait_manager, actions.get("IfToddlerAdd", []))
 
     # Apply general traits
@@ -115,7 +106,9 @@ def process_sim_traits_and_skills(sim, output, actions):
 def _apply_traits(sim, output, trait_manager, traits):
     for trait_id in traits:
         output(f"Resolving trait ID: {trait_id}")
-        trait = trait_manager.get(get_resource_key(trait_id, Types.TRAIT))
+        key = get_resource_key(trait_id, Types.TRAIT)
+        output(f"Generated resource key for trait {trait_id}: {key}")
+        trait = trait_manager.get(key)
         output(f"Resolved trait: {getattr(trait, '__name__', 'None')}" if trait else f"Failed to resolve trait {trait_id}")
         if trait and not sim.has_trait(trait):
             sim.add_trait(trait)
@@ -146,7 +139,9 @@ def _apply_skills(sim, output, skill_manager, skills):
 
     for skill_id in skills:
         output(f"Attempting to resolve skill ID: {skill_id}")
-        skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
+        key = get_resource_key(skill_id, Types.STATISTIC)
+        output(f"Generated resource key for skill {skill_id}: {key}")
+        skill = skill_manager.get(key)
 
         if not skill:
             output(f"Error: Failed to resolve skill ID {skill_id}. Skipping...")
@@ -317,6 +312,31 @@ ghostshell_trait_commands = {
     }
 }
 
+
+@sims4.commands.Command('gs.test', command_type=sims4.commands.CommandType.Live)
+def test_command(*args, _connection=None):
+    output = sims4.commands.CheatOutput(_connection)
+    output("gs.test is running")
+    client = services.client_manager().get(_connection)
+    sim = resolve_sim(args, client)
+
+    if sim is None:
+        output("Could not resolve Sim.")
+        return
+
+    output(f"Resolved Sim ID: {sim.sim_id}")
+    output(f"Sim Name: {sim.first_name} {sim.last_name}")
+    output("Defined Age Constants:")
+    output(f"AGE_BABY = {GSAge.BABY.value}")
+    output(f"AGE_INFANT = {GSAge.INFANT.value}")
+    output(f"AGE_TODDLER = {GSAge.TODDLER.value}")
+    output(f"AGE_CHILD = {GSAge.CHILD.value}")
+    output(f"AGE_TEEN = {GSAge.TEEN.value}")
+    output(f"AGE_YOUNGADULT = {GSAge.YOUNG_ADULT.value}")
+    output(f"AGE_ADULT = {GSAge.ADULT.value}")
+    output(f"AGE_ELDER = {GSAge.ELDER.value}")
+
+
 for command, actions in ghostshell_trait_commands.items():
     def make_command(command=command, actions=actions):
         @sims4.commands.Command(f'gs.{command}', command_type=sims4.commands.CommandType.Live)
@@ -339,14 +359,14 @@ for command, actions in ghostshell_trait_commands.items():
             # Remove school career if applicable
             if command in ["me", "my", "service"] and sim.career_tracker is not None:
                 school = None
-                if sim.age == AGE_TEEN:
+                if sim.age == GSAge.TEEN.value:
                     school = sim.career_tracker.get_career_by_uid(137624)  # High School
-                elif sim.age == AGE_CHILD:
+                elif sim.age == GSAge.CHILD.value:
                     school = sim.career_tracker.get_career_by_uid(135606)  # Grade School
 
                 if school:
                     sim.career_tracker.remove_career(school)
-                    output(f"Removed school career from {'teen' if sim.age == AGE_TEEN else 'child'} sim.")
+                    output(f"Removed school career from {'teen' if sim.age == GSAge.TEEN.value else 'child'} sim.")
 
         return command_fn
 
@@ -360,7 +380,7 @@ def love_bob_command(*args, _connection=None):
     sim = resolve_sim(args, client)
 
     # Force -JustFriends for baby, infant, toddler, or child
-    if sim.age in (AGE_BABY, AGE_INFANT, AGE_TODDLER, AGE_CHILD):
+    if sim.age in (GSAge.BABY.value, GSAge.INFANT.value, GSAge.TODDLER.value, GSAge.CHILD.value):
         args = list(args)
         if '-JustFriends' not in args:
             args.append('-JustFriends')
@@ -399,7 +419,7 @@ def love_bob_command(*args, _connection=None):
         score = sim.relationship_tracker.get_relationship_score(bob_dow.sim_id, friendship_track)
         output(f"Friendship score with Bob Dow is now {score}")
 
-        can_romance = sim.age in (AGE_TEEN, AGE_YOUNGADULT, AGE_ADULT, AGE_ELDER) and bob_dow.age in (AGE_TEEN, AGE_YOUNGADULT, AGE_ADULT, AGE_ELDER)
+        can_romance = sim.age in (GSAge.TEEN.value, GSAge.YOUNG_ADULT.value, GSAge.ADULT.value, GSAge.ELDER.value) and bob_dow.age in (GSAge.TEEN.value, GSAge.YOUNG_ADULT.value, GSAge.ADULT.value, GSAge.ELDER.value)
         if not just_friends and can_romance:
             relationship.track_tracker.load_data_if_needed()
             sim.relationship_tracker.set_relationship_score(bob_dow.sim_id, 100, romance_track)
@@ -417,24 +437,6 @@ def love_bob_command(*args, _connection=None):
         output(f"Bob Dow not found in current game session")
 
 
-@sims4.commands.Command('gs.maxkidskills', command_type=sims4.commands.CommandType.Live)
-def max_kid_skills(*args, _connection=None):
-    client = services.client_manager().get(_connection)
-    output = sims4.commands.CheatOutput(_connection)
-    sim = resolve_sim(args, client)
-
-    skill_manager = services.get_instance_manager(Types.STATISTIC)
-    child_skills = [16718, 16719, 16720, 16721]
-    toddler_skills = [140170, 140706, 136140, 144913, 140504]
-
-    if sim.age == AGE_CHILD:
-        _apply_skills(sim, output, skill_manager, child_skills)
-    elif sim.age == AGE_TODDLER:
-        _apply_skills(sim, output, skill_manager, toddler_skills)
-    else:
-        output("This command only applies to child or toddler Sims.")
-
-
 @sims4.commands.Command('gs.removeschool', command_type=sims4.commands.CommandType.Live)
 def remove_school_command(*args, _connection=None):
     client = services.client_manager().get(_connection)
@@ -446,12 +448,12 @@ def remove_school_command(*args, _connection=None):
     ged_trait = trait_manager.get(get_resource_key(ged_trait_id, Types.TRAIT))
 
     if sim.career_tracker is not None:
-        if sim.age == AGE_TEEN:
+        if sim.age == GSAge.TEEN.value:
             school = sim.career_tracker.get_career_by_uid(137624)
             if school:
                 sim.career_tracker.remove_career(school)
                 output(f"Removed school career from teen sim.")
-        elif sim.age == AGE_CHILD:
+        elif sim.age == GSAge.CHILD.value:
             school = sim.career_tracker.get_career_by_uid(135606)
             if school:
                 sim.career_tracker.remove_career(school)
