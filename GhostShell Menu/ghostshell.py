@@ -5,52 +5,50 @@ import sims4.commands
 import services
 from sims4.resources import Types, get_resource_key
 from relationships.relationship_bit import RelationshipBit
+from GS_enums.traits_enum import GSTrait
+from GS_enums.skills_enum import GSSkill
+from GS_enums.constants_enum import GSAge
 
 # Helper functions for traits and skills
 
 
 def _apply_traits(sim, output, trait_manager, traits):
     for trait_id in traits:
-        output(f"Resolving trait ID: {trait_id}")
         trait = trait_manager.get(get_resource_key(trait_id, Types.TRAIT))
         output(f"Resolved trait: {getattr(trait, '__name__', 'None')}" if trait else f"Failed to resolve trait {trait_id}")
         if trait and not sim.has_trait(trait):
             sim.add_trait(trait)
-            output(f"Added trait: {trait.__name__} (ID {trait_id})")
 
 
 def _remove_traits(sim, output, trait_manager, traits):
     for trait_id in traits:
-        output(f"Resolving trait ID for removal: {trait_id}")
         trait = trait_manager.get(get_resource_key(trait_id, Types.TRAIT))
         output(f"Resolved trait for removal: {getattr(trait, '__name__', 'None')}" if trait else f"Failed to resolve trait {trait_id}")
         if trait and sim.has_trait(trait):
             sim.remove_trait(trait)
-            output(f"Removed trait {trait.__name__} (ID {trait_id})")
 
 
 def _apply_skills(sim, output, skill_manager, skills):
-    fitness_levels = [0, 100, 1540, 3700, 7300, 12580, 19780, 29920, 43360, 60460, 81580]
+    # This HAS to stay in place. Just setting everything to 81580 doesn't work.
+    # The game uses a different set of levels for each skill, so we need to set them individually.
+    skill_levels = [0, 100, 1540, 3700, 7300, 12580, 19780, 29920, 43360, 60460, 81580]
 
     for skill_id in skills:
-        output(f"Resolving skill ID: {skill_id}")
         skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
         output(f"Resolved skill: {getattr(skill, '__name__', 'None')}" if skill else f"Failed to resolve skill {skill_id}")
         if skill:
             if not getattr(skill, 'is_skill', False) or not getattr(skill, 'is_statistic', False) or not getattr(skill, 'is_visible', False):
-                output(f"Skipping skill {skill_id} - not a valid visible skill for this sim. Attempting fallback apply.")
                 tracker = sim.get_tracker(skill)
                 if not tracker.has_statistic(skill):
                     tracker.add_statistic(skill)
                 stat = tracker.get_statistic(skill, add=True)
                 if stat:
-                    stat.set_value(fitness_levels[10])
+                    stat.set_value(skill_levels[10])
                     try:
                         stat.mark_dirty()
                         stat.show_on_ui = True
                     except AttributeError:
                         output(f"Stat {skill.__name__} has no mark_dirty attribute, fallback mode engaged.")
-                    output(f"Fallback skill maxed: {skill.__name__} from ID {skill_id}")
                 else:
                     output(f"Fallback failed to apply skill {skill.__name__} from ID {skill_id}")
                 continue
@@ -58,12 +56,9 @@ def _apply_skills(sim, output, skill_manager, skills):
                 tracker.add_statistic(skill)
             stat = tracker.get_statistic(skill, add=True)
             if stat:
-                stat.set_value(fitness_levels[10])
-                output(f"Skill maxed: {skill.__name__} from ID {skill_id}")
+                stat.set_value(skill_levels[10])
             else:
                 output(f"Failed to apply skill {skill.__name__} from ID {skill_id}")
-        else:
-            output(f"Failed to resolve skill {skill_id}")
 
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
@@ -121,33 +116,57 @@ ghostshell_trait_commands = {
         "IfChildSkills": [16718, 16719, 16720, 16721],
         "IfToddlerSkills": [140170, 140706, 136140, 144913, 140504]
     },
-    "maid": {
-        "IfChildAdd": [],
-        "IfToddlerAdd": [],
-        "IfMaleAdd": [],
-        "add": [],
-        "remove": [],
-        "IfFemaleAdd": [],
+    "royal": {
+        "add": [
+            GSTrait.ARCHAEOLOGYSKILL_GIVEAUTHENTICATIONMAIL_PROHIBIT, GSTrait.FAMETRAITS_SHINE_OFF,
+            GSTrait.ACTIVE, GSTrait.CHAMPIONOFTHEPEOPLE, GSTrait.CONNECTIONS,
+            GSTrait.DOCTOR_SICKNESSRESISTANT, GSTrait.FREESERVICES, GSTrait.FRUGAL,
+            GSTrait.GENDEROPTIONS_ATTRACTEDTO_FEMALE, GSTrait.GENDEROPTIONS_SEXUALITY_EXPLORING,
+            GSTrait.GYMRAT, GSTrait.HANDYPERSON_GOLDENWRENCH, GSTrait.HIGH_METABOLISM,
+            GSTrait.INCREDIBLYFRIENDLY, GSTrait.INSIDER, GSTrait.INTHEKNOW,
+            GSTrait.INVESTED, GSTrait.LEGENDARY, GSTrait.LIFESKILLS_GOODMANNERS,
+            GSTrait.LIFESKILLS_RESPONSIBLE, GSTrait.LIFESTYLES_ENERGETIC, GSTrait.LIVINGVICARIOUSLY,
+            GSTrait.MASTERTRAINER, GSTrait.MENTOR, GSTrait.PAMATRIARCH,
+            GSTrait.PARENTINGSKILL_UNDERSTANDBABY, GSTrait.PHYSICALLYGIFTED, GSTrait.PROPER,
+            GSTrait.QUICK_LEARNER, GSTrait.RELATABLE, GSTrait.SAVANT, GSTrait.SELFASSURED,
+            GSTrait.SEXUALORIENTATION_WOOHOOINTERESTS_FEMALE, GSTrait.SICKNESSIMMUNITY, GSTrait.STORMCHASER,
+            GSTrait.SUPERPARENT_ROLEMODEL, GSTrait.SURVIVALINSTINCT, GSTrait.TEMPERATURE_BURNINGMAN,
+            GSTrait.TEMPERATURE_ICEMAN, GSTrait.THEKNACK, GSTrait.WATERPROOF, GSTrait.WISE,
+            GSTrait.WORLDLYKNOWLEDGE, GSTrait.WICKEDWHIMS_NUDITYAVOIDER, GSTrait.WICKEDWHIMS_RELATIONSHIPS_POLY,
+            GSTrait.WICKEDWHIMS_SEX_ALWAYSACCEPT, GSTrait.WICKEDWHIMS_SEX_ATTRIBUTE_GENEROUSLOVER
+        ],
+        "IfTeenAdd": [GSTrait.HSEXIT_GRADUATE_EARLY],
+        "IfMaleAdd": [
+            GSTrait.BUSINESS_SAVVY, GSTrait.ICONIC, GSTrait.MOTIVATINGSPEAKER,
+            GSTrait.UNIVERSITY_COMMUNICATIONSDEGREEBSHONORS, GSTrait.UNIVERSITY_ECONOMICSDEGREEBSHONORS, GSTrait.WICKEDWHIMS_SEX_CUCKOLD
+        ],
+        "IfFemaleAdd": [
+            GSTrait.ALLURING, GSTrait.GENDEROPTIONS_ATTRACTEDTO_MALE, GSTrait.GREATKISSER,
+            GSTrait.PERFECTHOST, GSTrait.SEXUALORIENTATION_WOOHOOINTERESTS_MALE, GSTrait.SOCIALLYGIFTED,
+            GSTrait.UNIVERSITY_ARTHISTORYDEGREEBSHONORS, GSTrait.UNIVERSITY_HISTORYDEGREEBSHONORS,
+            GSTrait.UNIVERSITY_LANGUAGEANDLITERATUREDEGREEBSHONORS, GSTrait.WELLNESS_SELFCAREEXPERTISE,
+            GSTrait.WICKEDWHIMS_ATTRACTIVENESS_SIMPREFERENCE_LIKES_FACIALHAIR_BEARD, GSTrait.WICKEDWHIMS_ATTRACTIVENESS_SIMPREFERENCE_LIKES_HAIRCOLOR_BROWN,
+            GSTrait.WICKEDWHIMS_BODYHAIR_PUBICHAIR_ISDISABLED, GSTrait.WICKEDWHIMS_CUMSLUT, GSTrait.WICKEDWHIMS_MENSTRUALCYCLE_NOBLEEDING,
+            GSTrait.WICKEDWHIMS_RELATIONSHIPS_SEXCHEATER, GSTrait.WICKEDWHIMS_SEX_SEXUALLYALLURING, GSTrait.REWARD_INCEST
+        ],
+        "remove": [
+            GSTrait.FAMETRAITS_CELEBRITYWALK_ON, GSTrait.FERTILE, GSTrait.GENDEROPTIONS_SEXUALITY_NOTEXPLORING, GSTrait.HIGHMAINTENANCE
+        ],
         "IfFemaleRemove": [],
-        "IfTeenAdd": [3455194433],
-        "skills": [],
-        "IfTeenSkills": [],
-        "IfChildSkills": [],
-        "IfToddlerSkills": []
-    },
-    "nanny": {
-        "IfChildAdd": [],
-        "IfToddlerAdd": [],
-        "IfMaleAdd": [],
-        "add": [],
-        "remove": [],
-        "IfFemaleAdd": [],
-        "IfFemaleRemove": [],
-        "IfTeenAdd": [3455194433],
-        "skills": [],
-        "IfTeenSkills": [],
-        "IfChildSkills": [],
-        "IfToddlerSkills": []
+        "skills": [
+            GSSkill.WW_SEXPERTISE, GSSkill.ARCHAEOLOGY, GSSkill.CHARISMA, GSSkill.COOKING,
+            GSSkill.FITNESS, GSSkill.HANDINESS, GSSkill.LOGIC, GSSkill.PARENTING, GSSkill.PROGRAMMING,
+            GSSkill.ROCKCLIMB, GSSkill.ROCKETSCIENCE, GSSkill.SKIING
+        ],
+        "IfFemaleSkills": [GSSkill.WELLNESS],
+        "IfMaleSkills": [GSSkill.ENTREPRENEUR],
+        "IfToddlerSkills": [
+            GSSkill.COMMUNICATION, GSSkill.IMMAGINATION, GSSkill.MOVEMENT, GSSkill.POTTY, GSSkill.THINKING
+        ],
+        "IfChildSkills": [
+            GSSkill.CREATIVITY, GSSkill.MENTAL, GSSkill.MOTOR, GSSkill.SOCIAL
+        ],
+        "IfTeenSkills": []
     },
     "service": {
         "IfChildAdd": [],
@@ -162,34 +181,6 @@ ghostshell_trait_commands = {
         "IfTeenSkills": [],
         "IfChildSkills": [],
         "IfToddlerSkills": [],
-    },
-    "slave": {
-        "IfChildAdd": [],
-        "IfToddlerAdd": [],
-        "IfMaleAdd": [],
-        "add": [],
-        "remove": [],
-        "IfFemaleAdd": [],
-        "IfFemaleRemove": [],
-        "IfTeenAdd": [3455194433],
-        "skills": [],
-        "IfTeenSkills": [],
-        "IfChildSkills": [],
-        "IfToddlerSkills": []
-    },
-    "hot": {
-        "IfChildAdd": [],
-        "IfToddlerAdd": [],
-        "IfMaleAdd": [],
-        "add": [],
-        "remove": [],
-        "IfFemaleAdd": [],
-        "IfFemaleRemove": [],
-        "IfTeenAdd": [3455194433],
-        "skills": [],
-        "IfTeenSkills": [],
-        "IfChildSkills": [],
-        "IfToddlerSkills": []
     },
     "sub": {
         "add": [15713697132725812026, 15260778326631125946, 9860031022131805491, 14185653986600082294, 10190719869461745074, 460148084400330375],
@@ -216,11 +207,12 @@ for command, actions in ghostshell_trait_commands.items():
 
             # Get the household and sims in it
             # Auto-pay bills for the household
-            if household and hasattr(household, 'bills_manager'):
-                bills = household.bills_manager
-                if hasattr(bills, 'pay_all_bills'):
-                    bills.pay_all_bills()
-                    output("Auto-paid household bills.")
+            if command in ["me", "my", "service", "curated", "royal"]:
+                if household and hasattr(household, 'bills_manager'):
+                    bills = household.bills_manager
+                    if hasattr(bills, 'pay_all_bills'):
+                        bills.pay_all_bills()
+                        output("Auto-paid household bills.")
 
             trait_manager = services.get_instance_manager(Types.TRAIT)
             skill_manager = services.get_instance_manager(Types.STATISTIC)

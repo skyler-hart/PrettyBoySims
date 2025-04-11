@@ -1,6 +1,4 @@
-from enum import Enum
-
-class GSAge(Enum):
+class GSAge:
     BABY = 0
     INFANT = 1
     TODDLER = 2

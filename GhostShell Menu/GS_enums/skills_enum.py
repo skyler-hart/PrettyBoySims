@@ -1,6 +1,4 @@
-from enum import Enum
-
-class GSSkills(Enum):
+class GSSkill:
     #WickedWhims
     WW_NUDITY = 4641759162532272279
     WW_SEXPERTISE = 11311871620839888931
@@ -30,6 +28,7 @@ class GSSkills(Enum):
     ENTREPRENEUR = 274197
     FABRICATION = 231908
     FISHING = 39397
+    FITNESS = 16659
     FLOWERARRANGE = 186703
     FOOSBALL = 122854
     GARDENING = 16700
