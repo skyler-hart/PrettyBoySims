@@ -89,7 +89,7 @@ def _apply_skills(sim, output, skill_manager, skills):
         if stat:
             try:
                 stat.set_value(skill_levels[10])
-                stat.mark_dirty()
+                # stat.mark_dirty()
                 stat.show_on_ui = True
             except Exception as e:
                 output(f"Error applying value or UI to skill {skill.__name__}: {e}")
@@ -336,12 +336,22 @@ for command, actions in ghostshell_trait_commands.items():
 def love_bob_command(*args, _connection=None):
     client = services.client_manager().get(_connection)
     output = sims4.commands.CheatOutput(_connection)
+
+    # Resolve the active Sim
     sim = client.active_sim.sim_info
+    if not sim:
+        output("Error: Could not resolve the active Sim.")
+        return
 
     # Resolve Bob Dow
     bob_dow = resolve_sim(["Bob", "Dow"], client)
     if not bob_dow:
-        output("Bob Dow not found in the game.")
+        output("Error: Bob Dow not found in the game.")
+        return
+
+    # Ensure both sim and bob_dow are valid SimInfo objects
+    if not hasattr(sim, 'sim_id') or not hasattr(bob_dow, 'sim_id'):
+        output("Error: One or both Sims are invalid.")
         return
 
     # Check if the user wants to set "Just Friends"
@@ -353,7 +363,10 @@ def love_bob_command(*args, _connection=None):
     _apply_traits(sim, output, trait_manager, love_traits)
 
     # Set relationship with Bob Dow using the helper function
-    set_relationship(sim, bob_dow, friendship_score=100, romantic_bit_id=15745, just_friends=just_friends, output=output, romantic_score=100)
+    try:
+        set_relationship(sim, bob_dow, 100, 15745, just_friends, output, romantic_score=100)
+    except Exception as e:
+        output(f"Error while setting relationship: {e}")
 
 @sims4.commands.Command('gs.removeschool', command_type=sims4.commands.CommandType.Live)
 def remove_school_command(_connection=None):
