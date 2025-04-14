@@ -8,6 +8,7 @@ from relationships.relationship_bit import RelationshipBit
 from GS_enums.traits_enum import GSTrait
 from GS_enums.skills_enum import GSSkill
 from GS_enums.constants_enum import GSAge
+from server_commands.argument_helpers import TunableInstanceParam
 
 # Helper functions for traits and skills
 def resolve_sim(args, client):
@@ -393,3 +394,61 @@ def remove_school_command(_connection=None):
     if ged_trait and not sim.has_trait(ged_trait):
         sim.add_trait(ged_trait)
         output(f"Added GED trait: {ged_trait.__name__} (ID {ged_trait_id})")
+
+@sims4.commands.Command('gs.bob', command_type=sims4.commands.CommandType.Live)
+def bob_command(*args, _connection=None):
+    client = services.client_manager().get(_connection)
+    output = sims4.commands.CheatOutput(_connection)
+
+    # Resolve the active Sim
+    sim = client.active_sim.sim_info
+    if not sim:
+        output("Error: Could not resolve the active Sim.")
+        return
+
+    # Resolve Bob Dow
+    bob_dow = resolve_sim(["Bob", "Dow"], client)
+    if not bob_dow:
+        output("Error: Bob Dow not found in the game.")
+        return
+
+    # Ensure both sim and bob_dow are valid SimInfo objects
+    if not hasattr(sim, 'sim_id') or not hasattr(bob_dow, 'sim_id'):
+        output("Error: One or both Sims are invalid.")
+        return
+
+    # Set friendship relationship with Bob Dow
+    try:
+        set_relationship(sim, bob_dow, friendship_score=100, romantic_bit_id=None, just_friends=True, output=output)
+        output(f"Maxed friendship score with {bob_dow.first_name} {bob_dow.last_name}.")
+    except Exception as e:
+        output(f"Error while setting friendship: {e}")
+
+@sims4.commands.Command('gs.bobrel', command_type=sims4.commands.CommandType.Live)
+def bob_relationship_score_command(track_type: TunableInstanceParam(sims4.resources.Types.STATISTIC) = None, _connection=None):
+    output = sims4.commands.CheatOutput(_connection)
+
+    # Resolve the active Sim
+    client = services.client_manager().get(_connection)
+    sim = client.active_sim.sim_info
+    if not sim:
+        output("Error: Could not resolve the active Sim.")
+        return
+
+    # Resolve Bob Dow
+    bob_dow = resolve_sim(["Bob", "Dow"], client)
+    if not bob_dow:
+        output("Error: Bob Dow not found in the game.")
+        return
+
+    # Ensure track_type is valid
+    if track_type is None:
+        output("Error: Invalid relationship type requested.")
+        return
+
+    # Get the relationship score
+    try:
+        score = sim.relationship_tracker.get_relationship_score(bob_dow.sim_id, track_type)
+        output(f"Relationship Score with Bob Dow: {score}")
+    except Exception as e:
+        output(f"Error while retrieving relationship score: {e}")
