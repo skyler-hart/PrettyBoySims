@@ -3,12 +3,17 @@
 import os
 import sims4.commands
 import services
+import sims4.resources
 from sims4.resources import Types, get_resource_key
 from relationships.relationship_bit import RelationshipBit
+from relationships.relationship_tracker import RelationshipTracker
+from relationships.relationship_track import RelationshipTrack
+from sims4.tuning.instance_manager import services
 from GS_enums.traits_enum import GSTrait
 from GS_enums.skills_enum import GSSkill
 from GS_enums.constants_enum import GSAge
 from server_commands.argument_helpers import TunableInstanceParam
+
 
 # Helper functions for traits and skills
 def resolve_sim(args, client):
@@ -98,30 +103,37 @@ def _apply_skills(sim, output, skill_manager, skills):
             output(f"Tracker returned no statistic for skill {skill.__name__} (ID {skill_id})")
 
 
-def set_relationship(sim, target_sim, friendship_score, romantic_bit_id, just_friends, output, romantic_score=None):
-    """Sets the relationship between two Sims."""
-    sim.relationship_tracker.add_relationship_score(target_sim.sim_id, friendship_score, "friendship")
+def set_relationship(sim_info_a, sim_info_b, friendship_score: float = 100.0, romance_score: float = 100.0):
+    # Ensure both Sims have relationship trackers
+    if not sim_info_a.relationship_tracker or not sim_info_b.relationship_tracker:
+        return
 
-    if not just_friends:
-        # Ensure both Sims are teen or older for romantic relationships
-        if sim.age >= GSAge.TEEN.value and target_sim.age >= GSAge.TEEN.value:
-            bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
-            romantic_bit = bit_manager.get(get_resource_key(romantic_bit_id, Types.RELATIONSHIP_BIT))
-            if romantic_bit:
-                sim.relationship_tracker.add_relationship_bit(target_sim.sim_id, romantic_bit)
-                output(f"Romantic interest set with {target_sim.first_name} {target_sim.last_name}")
-                # Set romantic score if provided
-                if romantic_score is not None:
-                    sim.relationship_tracker.add_relationship_score(target_sim.sim_id, romantic_score, "romance")
-                    output(f"Romantic relationship score set to {romantic_score} with {target_sim.first_name} {target_sim.last_name}")
-            else:
-                output(f"Failed to resolve romantic relationship bit ID: {romantic_bit_id}")
-        else:
-            output("Romantic relationships can only be set for Sims who are Teen or older.")
-    else:
-        output(f"Set as friends with {target_sim.first_name} {target_sim.last_name} only 💬")
+    # Add relationship if it doesn't exist
+    sim_info_a.relationship_tracker.add_relationship(sim_info_b.sim_id)
+    sim_info_b.relationship_tracker.add_relationship(sim_info_a.sim_id)
 
-# Dictionary populated from the spreadsheet logic
+    # Retrieve the relationship instance
+    relationship = sim_info_a.relationship_tracker.get_relationship(sim_info_b.sim_id)
+    if not relationship:
+        return
+
+    # Access the track manager
+    track_manager = services.get_instance_manager(sims4.resources.Types.RELATIONSHIP_TRACK)
+
+    # Set friendship score
+    friendship_track = track_manager.get('LTR_Friendship_Main')
+    if friendship_track:
+        relationship.add_track('LTR_Friendship_Main')
+        relationship.set_track_score('LTR_Friendship_Main', friendship_score)
+
+    # Set romance score
+    romance_track = track_manager.get('LTR_Romance_Main')
+    if romance_track:
+        relationship.add_track('LTR_Romance_Main')
+        relationship.set_track_score('LTR_Romance_Main', romance_score)
+
+
+# Dictionary populated from the traits/skills spreadsheet
 ghostshell_trait_commands = {
     "me": {
         "IfChildAdd": [],
