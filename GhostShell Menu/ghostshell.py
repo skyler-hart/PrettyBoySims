@@ -370,5 +370,5 @@ def get_sim_id_command(*args, _connection=None):
         output("Error: Could not resolve the Sim.")
         return
 
-    # Output the Sim's ID
-    output(f"Sim ID: {sim.sim_id}")
+    # Output the Sim's name and ID
+    output(f"Sim Name: {sim.first_name} {sim.last_name}, Sim ID: {sim.sim_id}")
