@@ -71,24 +71,24 @@ def _apply_skills(sim, output, skill_manager, skills):
 
         tracker = sim.get_tracker(skill)
         if tracker is None:
-            output(f"No tracker found for skill {skill.__name__}. Initializing tracker.")
-            tracker = sim.add_tracker(skill)
+            output(f"No tracker found for skill {skill.__name__}. Adding tracker.")
+            sim.add_tracker(skill)
+            tracker = sim.get_tracker(skill)
 
         if not tracker.has_statistic(skill):
             output(f"Statistic for skill {skill.__name__} not found. Adding it.")
             tracker.add_statistic(skill)
 
         stat = tracker.get_statistic(skill, add=True)
-        if stat:
+        if stat and hasattr(stat, 'set_value'):
             try:
-                if hasattr(stat, 'set_value'):
-                    stat.set_value(skill_levels[10])
+                stat.set_value(skill_levels[10])
                 if hasattr(stat, 'show_on_ui'):
                     stat.show_on_ui = True
             except Exception as e:
                 output(f"Error applying value or UI to skill {skill.__name__}: {e}")
         else:
-            output(f"Tracker returned no statistic for skill {skill.__name__} (ID {skill_id})")
+            output(f"Skill {skill.__name__} cannot be applied to this Sim.")
 
 
 def set_relationship(sim, target_sim, friendship_score, romantic_bit_id, just_friends, output, romantic_score=None):
