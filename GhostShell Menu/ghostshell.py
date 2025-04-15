@@ -65,24 +65,20 @@ def _apply_skills(sim, output, skill_manager, skills):
 
     for skill_id in skills:
         skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
-        output(f"Resolved skill: {getattr(skill, '__name__', 'None')}" if skill else f"Failed to resolve skill {skill_id}")
+        output(f"Resolved skill: {getattr(skill, '__name__', 'None')}") if skill else output(f"Failed to resolve skill {skill_id}")
         if not skill:
             continue
 
         tracker = sim.get_tracker(skill)
         if tracker is None:
-            output(f"No tracker found for skill {skill.__name__}. Skipping.")
-            continue
+            output(f"No tracker found for skill {skill.__name__}. Initializing tracker.")
+            tracker = sim.add_tracker(skill)
 
         if not tracker.has_statistic(skill):
+            output(f"Statistic for skill {skill.__name__} not found. Adding it.")
             tracker.add_statistic(skill)
-        stat = None
-        try:
-            stat = tracker.get_statistic(skill, add=True)
-        except Exception as e:
-            output(f"Error getting statistic for skill {skill.__name__}: {e}")
-            continue
 
+        stat = tracker.get_statistic(skill, add=True)
         if stat:
             try:
                 if hasattr(stat, 'set_value'):
