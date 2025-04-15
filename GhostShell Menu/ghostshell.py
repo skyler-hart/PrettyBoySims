@@ -368,4 +368,4 @@ def get_sim_id_command(*args, _connection=None):
         return
 
     # Output the Sim's ID
-    output(f"Sim ID: {sim.sim_id}")
+    output(f"{sim.first_name} {sim.last_name} has Sim ID: {sim.sim_id}")
