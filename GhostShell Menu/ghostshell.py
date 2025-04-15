@@ -85,8 +85,10 @@ def _apply_skills(sim, output, skill_manager, skills):
 
         if stat:
             try:
-                stat.set_value(skill_levels[10])
-                stat.show_on_ui = True
+                if hasattr(stat, 'set_value'):
+                    stat.set_value(skill_levels[10])
+                if hasattr(stat, 'show_on_ui'):
+                    stat.show_on_ui = True
             except Exception as e:
                 output(f"Error applying value or UI to skill {skill.__name__}: {e}")
         else:
