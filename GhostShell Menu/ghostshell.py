@@ -1,12 +1,16 @@
 import os
-import sims4.commands
 import services
+import sims4.commands
+import sims4.resources
 from sims4.resources import Types, get_resource_key
 from GS_enums.traits_enum import GSTrait
 from GS_enums.skills_enum import GSSkill
 from GS_enums.constants_enum import GSAge, GSCareer
+from relationships.relationship_tracker import RelationshipTracker
+from relationships.relationship_track import RelationshipTrack
 
-# Helper functions for traits and skills
+
+# Helper functions
 def resolve_sim(args, client):
     """
     Resolves a Sim by name or defaults to the active Sim.
@@ -93,28 +97,22 @@ def _apply_skills(sim, output, skill_manager, skills):
             continue  # Ensure the loop continues even if an error occurs
 
 
-def set_relationship(sim, target_sim, friendship_score, romantic_bit_id, just_friends, output, romantic_score=None):
-    """Sets the relationship between two Sims."""
-    sim.relationship_tracker.add_relationship_score(target_sim.sim_id, friendship_score, "friendship")
+def set_relationship(sim_info_a, sim_info_b, friendship_score: float = 100.0, romance_score: float = 100.0):
+    # Ensure both Sims have relationship trackers
+    if not sim_info_a.relationship_tracker or not sim_info_b.relationship_tracker:
+        return
 
-    if not just_friends:
-        # Ensure both Sims are teen or older for romantic relationships
-        if sim.age >= GSAge.TEEN.value and target_sim.age >= GSAge.TEEN.value:
-            bit_manager = services.get_instance_manager(Types.RELATIONSHIP_BIT)
-            romantic_bit = bit_manager.get(get_resource_key(romantic_bit_id, Types.RELATIONSHIP_BIT))
-            if romantic_bit:
-                sim.relationship_tracker.add_relationship_bit(target_sim.sim_id, romantic_bit)
-                output(f"Romantic interest set with {target_sim.first_name} {target_sim.last_name}")
-                # Set romantic score if provided
-                if romantic_score is not None:
-                    sim.relationship_tracker.add_relationship_score(target_sim.sim_id, romantic_score, "romance")
-                    output(f"Romantic relationship score set to {romantic_score} with {target_sim.first_name} {target_sim.last_name}")
-            else:
-                output(f"Failed to resolve romantic relationship bit ID: {romantic_bit_id}")
-        else:
-            output("Romantic relationships can only be set for Sims who are Teen or older.")
-    else:
-        output(f"Set as friends with {target_sim.first_name} {target_sim.last_name} only 💬")
+    # Add relationship if it doesn't exist
+    if not sim_info_a.relationship_tracker.has_relationship(sim_info_b.sim_id):
+        sim_info_a.relationship_tracker.create_relationship(sim_info_b.sim_id)
+        sim_info_b.relationship_tracker.create_relationship(sim_info_a.sim_id)
+
+    # Set friendship score
+    sim_info_a.relationship_tracker.set_relationship_score(sim_info_b.sim_id, friendship_score, track_type='friendship')
+
+    # Set romance score
+    sim_info_a.relationship_tracker.set_relationship_score(sim_info_b.sim_id, romance_score, track_type='romance')
+
 
 # Dictionary populated from the spreadsheet logic
 ghostshell_trait_commands = {
@@ -369,3 +367,30 @@ def get_sim_id_command(*args, _connection=None):
 
     # Output the Sim's ID
     output(f"{sim.first_name} {sim.last_name} has Sim ID: {sim.sim_id}")
+
+
+@sims4.commands.Command('gs.bob', command_type=sims4.commands.CommandType.Live)
+def add_relationship_with_bob(*args, _connection=None):
+    client = services.client_manager().get(_connection)
+    output = sims4.commands.CheatOutput(_connection)
+
+    # Resolve Bob Dow
+    bob = resolve_sim(["Bob", "Dow"], client)
+    if not bob:
+        output("Error: Could not resolve Bob Dow.")
+        return
+
+    # Resolve the active Sim
+    sim = client.active_sim.sim_info
+    if not sim:
+        output("Error: Could not resolve the active Sim.")
+        return
+
+    # Set a friendly and romantic relationship with Bob Dow
+    set_relationship(
+        sim_info_a=sim,
+        sim_info_b=bob,
+        friendship_score=50,
+        romance_score=30
+    )
+    output("Successfully set a friendly and romantic relationship with Bob Dow.")
