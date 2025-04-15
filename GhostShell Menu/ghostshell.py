@@ -111,7 +111,8 @@ def set_relationship(sim_info_a, sim_info_b, friendship_score: float = 100.0, ro
     sim_info_a.relationship_tracker.set_relationship_score(sim_info_b.sim_id, friendship_score, track_type='friendship')
 
     # Set romance score
-    sim_info_a.relationship_tracker.set_relationship_score(sim_info_b.sim_id, romance_score, track_type='romance')
+    if sim_info_a.age >= GSAge.TEEN and sim_info_b.age >= GSAge.TEEN:
+        sim_info_a.relationship_tracker.set_relationship_score(sim_info_b.sim_id, romance_score, track_type='romance')
 
 
 # Dictionary populated from the spreadsheet logic
@@ -390,7 +391,7 @@ def add_relationship_with_bob(*args, _connection=None):
     set_relationship(
         sim_info_a=sim,
         sim_info_b=bob,
-        friendship_score=50,
-        romance_score=30
+        friendship_score=100,
+        romance_score=100
     )
-    output("Successfully set a friendly and romantic relationship with Bob Dow.")
+    output("Successfully set relationship with Bob Dow.")
