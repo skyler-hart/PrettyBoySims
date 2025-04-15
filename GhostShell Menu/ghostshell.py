@@ -62,14 +62,13 @@ def _remove_traits(sim, output, trait_manager, traits):
             sim.remove_trait(trait)
 
 
-def _apply_skills(sim, output, skill_manager, skills):
-    # This HAS to stay in place. Just setting everything to 81580 doesn't work.
-    # The game uses a different set of levels for each skill, so we need to set them individually.
-    skill_levels = [0, 100, 1540, 3700, 7300, 12580, 19780, 29920, 43360, 60460, 81580]
+def _apply_skills(sim, output, skill_manager, skills, skill_levels_dict=None):
+    # Default skill levels if no specific levels are provided
+    default_skill_levels = [0, 100, 1540, 3700, 7300, 12580, 19780, 29920, 43360, 60460, 81580]
 
     for skill_id in skills:
         skill = skill_manager.get(get_resource_key(skill_id, Types.STATISTIC))
-        output(f"Resolved skill: {getattr(skill, '__name__', 'None')}") if skill else output(f"Failed to resolve skill {skill_id}")
+        output(f"Resolved skill: {getattr(skill, '__name__', 'None')}" if skill else f"Failed to resolve skill {skill_id}")
         if not skill:
             continue
 
@@ -86,10 +85,12 @@ def _apply_skills(sim, output, skill_manager, skills):
         try:
             stat = tracker.get_statistic(skill, add=True)
             if stat and hasattr(stat, 'set_value'):
-                stat.set_value(skill_levels[10])
+                # Use the specific level if provided, otherwise default to max level
+                level = skill_levels_dict.get(skill_id, 10) if skill_levels_dict else 10
+                stat.set_value(default_skill_levels[level])
                 if hasattr(stat, 'show_on_ui'):
                     stat.show_on_ui = True
-                output(f"Successfully applied skill {skill.__name__}.")
+                output(f"Successfully applied skill {skill.__name__} at level {level}.")
             else:
                 output(f"Skill {skill.__name__} cannot be applied to this Sim.")
         except Exception as e:
@@ -200,7 +201,6 @@ ghostshell_trait_commands = {
             GSTrait.PERFECTHOST, GSTrait.SEXUALORIENTATION_WOOHOOINTERESTS_MALE, GSTrait.SOCIALLYGIFTED,
             GSTrait.UNIVERSITY_ARTHISTORYDEGREEBSHONORS, GSTrait.UNIVERSITY_HISTORYDEGREEBSHONORS,
             GSTrait.UNIVERSITY_LANGUAGEANDLITERATUREDEGREEBSHONORS, GSTrait.WELLNESS_SELFCAREEXPERTISE,
-            GSTrait.WICKEDWHIMS_ATTRACTIVENESS_SIMPREFERENCE_LIKES_FACIALHAIR_BEARD, GSTrait.WICKEDWHIMS_ATTRACTIVENESS_SIMPREFERENCE_LIKES_HAIRCOLOR_BROWN,
             GSTrait.WICKEDWHIMS_BODYHAIR_PUBICHAIR_ISDISABLED, GSTrait.WICKEDWHIMS_CUMSLUT, GSTrait.WICKEDWHIMS_MENSTRUALCYCLE_NOBLEEDING,
             GSTrait.WICKEDWHIMS_RELATIONSHIPS_SEXCHEATER, GSTrait.WICKEDWHIMS_SEX_SEXUALLYALLURING, GSTrait.REWARD_INCEST
         ],
@@ -209,11 +209,14 @@ ghostshell_trait_commands = {
         ],
         "IfFemaleRemove": [],
         "skills": [
-            GSSkill.WW_SEXPERTISE, GSSkill.ARCHAEOLOGY, GSSkill.CHARISMA, GSSkill.COOKING,
+            WWSkill.SEXPERTISE, GSSkill.ARCHAEOLOGY, GSSkill.CHARISMA, GSSkill.COOKING,
             GSSkill.FITNESS, GSSkill.HANDINESS, GSSkill.LOGIC, GSSkill.PARENTING, GSSkill.PROGRAMMING,
-            GSSkill.ROCKCLIMB, GSSkill.ROCKETSCIENCE, GSSkill.SKIING
+            GSSkill.ROCKCLIMB, GSSkill.ROCKETSCIENCE, GSSkill.SKIING, WWAttr.AgeYoungAdult, WWAttr.AgeTeen
         ],
-        "IfFemaleSkills": [GSSkill.WELLNESS],
+        "IfFemaleSkills": [
+            GSSkill.WELLNESS, WWAttr.BodyWeightHeavy, WWAttr.ColorHairBrown, WWAttr.ColorSkinLight, WWAttr.Female, WWAttr.Male,
+            WWAttr.HairBald, WWAttr.HairShort, WWAttr.HairFacialBeard, WWAttr.OccultHuman
+        ],
         "IfMaleSkills": [GSSkill.ENTREPRENEUR],
         "IfToddlerSkills": [
             GSSkill.COMMUNICATION, GSSkill.IMMAGINATION, GSSkill.MOVEMENT, GSSkill.POTTY, GSSkill.THINKING
@@ -394,4 +397,43 @@ def add_relationship_with_bob(*args, _connection=None):
         friendship_score=100,
         romance_score=100
     )
-    output("Successfully set relationship with Bob Dow.")
+
+    # Apply additional skills from attr
+    attr = {
+        WWAttr.AgeYoungAdult: 20480,
+        WWAttr.AgeAdult: 10240,
+        WWAttr.AgeElder: 0,
+        WWAttr.AgeTeen: 10240,
+        WWAttr.BodyWeightHeavy: 20480,
+        WWAttr.BodyWeightAverage: 10240,
+        WWAttr.BodyWeightLight: 0,
+        WWAttr.ColorHairBrown: 20480,
+        WWAttr.ColorHairLightBrown: 20480,
+        WWAttr.ColorSkinLight: 20480,
+        WWAttr.ColorSkinMedium: 10240,
+        WWAttr.ColorSkinFantasy: 0,
+        WWAttr.ColorSkinDark: 0,
+        WWAttr.Female: 10240,
+        WWAttr.Male: 20480,
+        WWAttr.HairBald: 20480,
+        WWAttr.HairShort: 20480,
+        WWAttr.HairLong: 0,
+        WWAttr.HairMedium: 0,
+        WWAttr.HairFacialMustache: 0,
+        WWAttr.HairFacialBeard: 20480,
+        WWAttr.HairFacialGoatee: 0,
+        WWAttr.HairFacialClean: 0,
+        WWAttr.OccultHuman: 20480,
+        WWAttr.OccultAlien: 0,
+        WWAttr.OccultGhost: 0,
+        WWAttr.OccultMermaid: 0,
+        WWAttr.OccultPlantSim: 0,
+        WWAttr.OccultSpellcaaster: 10240,
+        WWAttr.OccultVampire: 0,
+        WWAttr.OccultWerewolf: 0,
+    }
+    skill_manager = services.get_instance_manager(Types.STATISTIC)
+    _apply_skills(sim, output, skill_manager, attr.keys(), skill_levels_dict=attr)
+
+    # Output
+    output("Successfully set relationship with Bob Dow and applied skills with specific levels.")
