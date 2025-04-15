@@ -4,7 +4,7 @@ import sims4.commands
 import sims4.resources
 from sims4.resources import Types, get_resource_key
 from GS_enums.traits_enum import GSTrait
-from GS_enums.skills_enum import GSSkill
+from GS_enums.stats_enum import GSSkill, WWAttr, WWSkill, KritSkill
 from GS_enums.constants_enum import GSAge, GSCareer
 from relationships.relationship_tracker import RelationshipTracker
 from relationships.relationship_track import RelationshipTrack
